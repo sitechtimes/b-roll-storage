@@ -1,11 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Upload from '@/views/Upload.vue'
+</script>
 
 <template>
   <div id="app">
     <nav>
       <router-link to="/">Home</router-link>
       |
-      <router-link to="/about">About</router-link>
+      <router-link to="/Upload">About</router-link>
     </nav>
 
     <main>
