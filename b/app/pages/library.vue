@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Welcome</h1>
-    <p>wazzup</p>
+    <h1>library</h1>
   </div>
 </template>
