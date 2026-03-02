@@ -1,15 +1,46 @@
 <template>
-  <h1 class="text-8xl font-bold text-center">Upload</h1>
-  <div class="card bg-base-100 w-96 shadow-sm">
-    <div class="card-body items-center text-center">
-      <h2 class="card-title">Make this card bigger and have upload stuff :)</h2>
-      <p>
-        A card component has a figure, a body part, and inside body there are
-        title and actions parts
-      </p>
-      <div class="card-actions">
-        <button class="btn btn-primary">Buy Now</button>
+  <div class="min-h-screen flex items-center justify-center">
+    <div
+      class="card bg-base-100 w-[95vw] max-w-2xl md:max-w-3xl min-h-105 md:min-h-130 shadow-sm"
+    >
+      <div class="card-body items-center text-center p-8 md:p-10">
+        <h2 class="card-title text-4xl">B roll upload</h2>
+
+        <div
+          class="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 mb-4 cursor-pointer hover:border-gray-400 transition"
+        >
+          <input type="file" accept="video/*" class="hidden" id="videoUpload" />
+          <label
+            for="videoUpload"
+            class="flex flex-col items-center justify-center cursor-pointer"
+          >
+            <svg
+              class="w-12 h-12 text-gray-400 mb-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+            <p class="text-sm text-gray-500">Drop video or click to upload</p>
+            <p class="text-xs text-gray-400">MP4, WebM, or Ogg</p>
+          </label>
+        </div>
+
+        <p>Tag holders</p>
+        <div class="card-actions">
+          <button class="btn btn-primary absolute bottom-4 left-4 right-4">
+            Upload
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts"></script>
