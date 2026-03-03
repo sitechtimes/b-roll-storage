@@ -24,7 +24,8 @@ const schemaDefinition = {
   },
   tags: { 
     type: [String], 
-    required: true 
+    default: [] as string[],
+    required: true,
     }, 
 } as const;
 

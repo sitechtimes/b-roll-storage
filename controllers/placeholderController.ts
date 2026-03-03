@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
+import { Media } from "../models/media";
 
-async function getHelloWorld(req: Request, res: Response) {
-    res.json("Hello World");
-};
+async function index(req: Request, res: Response) {
+    const media = await Media.find();
+    res.json(media);
+}
 
 async function getArticleByTitle(req: Request, res: Response) {
     try {
@@ -17,4 +19,4 @@ async function login(req: Request, res: Response) {
     } catch (error) {}
 };
 
-module.exports = {getHelloWorld, getArticleByTitle, login}
+module.exports = {index, getArticleByTitle, login}
