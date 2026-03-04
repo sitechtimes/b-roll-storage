@@ -16,7 +16,7 @@ model = Blip2ForConditionalGeneration.from_pretrained(
 img_url = r"https://www.paralympic.org/static-assets/webp/wb_showcase.webp"
 raw_image = Image.open(requests.get(img_url, stream=True).raw).convert("RGB")
 
-question = "Describe the image great detail: The image depicts"
+question = "Generate 4 one-word tags to describe the image (in the format: \"white\", \"hand\"...): \""
 
 inputs = processor(raw_image, question, return_tensors="pt")
 inputs = {k: v.to(model.device) for k, v in inputs.items()}
