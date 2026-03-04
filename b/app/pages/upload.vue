@@ -15,8 +15,8 @@
               accept="video/*"
               class="hidden"
               id="videoUpload"
+              @change="onFileUpload"
             />
-            // displays when hasfile is false
             <label
               for="videoUpload"
               class="flex flex-col items-center justify-center cursor-pointer"
@@ -38,7 +38,9 @@
               <p class="text-xs text-gray-400">MP4, MOV, Others</p>
             </label>
           </div>
-          <div></div>
+          <div v-if="hasFile">
+            <p>th files are real</p>
+          </div>
         </div>
 
         <p>Tag holders</p>
@@ -53,5 +55,18 @@
 </template>
 
 <script setup lang="ts">
-let hasFile = false;
+import { ref } from "vue";
+
+const hasFile = ref(false);
+
+const onFileUpload = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const uploadedFile = input.files?.[0];
+
+  if (uploadedFile) {
+    hasFile.value = true;
+    console.log(hasFile.value);
+    console.log(uploadedFile.name);
+  }
+};
 </script>
