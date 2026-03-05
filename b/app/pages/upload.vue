@@ -60,25 +60,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const hasFile = ref(false);
-const videoFile = ref<File | null>(null);
-const videoBlobUrl = ref<string | null>(null);
-
+const hasFile: { value: boolean } = ref(false);
+let videoFile = ref<File | null>(null);
+/* let tempURL = URL.createObjectURL(videoFile.value); */
 const onFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const uploadedFile = input.files?.[0];
 
   if (uploadedFile) {
-    videoFile.value = uploadedFile;
-    videoBlobUrl.value = URL.createObjectURL(uploadedFile);
     hasFile.value = true;
-    console.log("File:", uploadedFile.name);
-    console.log("Blob URL:", videoBlobUrl.value);
+    videoFile.value = uploadedFile;
+    console.log("test", hasFile.value);
+    console.log(uploadedFile.name);
   }
 };
 
 function test() {
-  console.log("File object:", videoFile.value);
-  console.log("Blob URL:", videoBlobUrl.value);
+  console.log(typeof videoFile.value, videoFile.value);
 }
 </script>
