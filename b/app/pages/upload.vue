@@ -45,7 +45,10 @@
 
         <p>Tag holders</p>
         <div class="card-actions">
-          <button class="btn btn-primary absolute bottom-4 left-4 right-4">
+          <button
+            class="btn btn-primary absolute bottom-4 left-4 right-4"
+            @click="test()"
+          >
             Upload
           </button>
         </div>
@@ -58,15 +61,24 @@
 import { ref } from "vue";
 
 const hasFile = ref(false);
+const videoFile = ref<File | null>(null);
+const videoBlobUrl = ref<string | null>(null);
 
 const onFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const uploadedFile = input.files?.[0];
 
   if (uploadedFile) {
+    videoFile.value = uploadedFile;
+    videoBlobUrl.value = URL.createObjectURL(uploadedFile);
     hasFile.value = true;
-    console.log(hasFile.value);
-    console.log(uploadedFile.name);
+    console.log("File:", uploadedFile.name);
+    console.log("Blob URL:", videoBlobUrl.value);
   }
 };
+
+function test() {
+  console.log("File object:", videoFile.value);
+  console.log("Blob URL:", videoBlobUrl.value);
+}
 </script>
