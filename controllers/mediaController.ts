@@ -7,19 +7,18 @@ async function index(req: Request, res: Response) {
 }
 
 async function getMedia(req: Request, res: Response) {
-    try {
-        let query: any = {}
+    console.log("sent")
+    let query: any = {}
 
-        if (req.query.type) {query.type = req.query.type};
-        if (req.query.title) {query.title = { $regex: req.query.title, $options: "i" }};
-        if (req.query.tag) {query.tag = req.query.tag};
+    if (req.query.type) {query.type = req.query.type};
+    if (req.query.title) {query.title = { $regex: req.query.title, $options: "i" }};
+    if (req.query.tag) {query.tag = req.query.tag};
 
-        const media = await Media.find(query)
+    const media = await Media.find(query)
 
-        throw new Error("Couldn't fetch media.")
-    } catch (error) {
+    if (!media) return res.status(404).json({ error: "Media Not Found" })
 
-    }
+    res.status(200).send(media);
 };
 
 async function createMedia(req: Request, res: Response) {

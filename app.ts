@@ -8,8 +8,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const placeholderRoutes = require("./routes/index");
-app.use(`/`, placeholderRoutes);
+const mediasRoutes = require("./routes/medias");
+app.use(`/`, mediasRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
