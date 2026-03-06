@@ -39,11 +39,18 @@
             </label>
           </div>
           <div v-if="hasFile">
-            <p>th files are real</p>
+            <video
+              ref="videoElement"
+              class="w-full rounded-lg mb-4"
+              controls
+              @loadedmetadata="captureFrame"
+            ></video>
           </div>
         </div>
+        <div class="py-6 w-full">
+          <p>Tag holders</p>
+        </div>
 
-        <p>Tag holders</p>
         <div class="card-actions">
           <button
             class="btn btn-primary absolute bottom-4 left-4 right-4"
@@ -60,22 +67,44 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const hasFile: { value: boolean } = ref(false);
-let videoFile = ref<File | null>(null);
-/* let tempURL = URL.createObjectURL(videoFile.value); */
+const hasFile: { value: boolean } = ref(false); // dont delete ascctualy important
+const videoFile = ref<File | null>(null);
+const videoElement = ref<HTMLVideoElement | null>(null);
+const thumbnailImage: { value: string } = ref("");
+
 const onFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  const uploadedFile = input.files?.[0];
+  const uploadedFile = input.files?.[0]; // grabs the upload file
 
   if (uploadedFile) {
-    hasFile.value = true;
+    // works if there is something uploaded
     videoFile.value = uploadedFile;
-    console.log("test", hasFile.value);
-    console.log(uploadedFile.name);
+    hasFile.value = true;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (videoElement.value && e.target?.result) {
+        videoElement.value.src = e.target.result as string;
+      }
+    };
+    reader.readAsDataURL(uploadedFile);
   }
 };
 
+function captureFrame() {
+  if (videoElement.value) {
+    const canvas = document.createElement("canvas");
+    canvas.width = videoElement.value.videoWidth;
+    canvas.height = videoElement.value.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(videoElement.value, 0, 0);
+      thumbnailImage.value = canvas.toDataURL("image/png");
+    }
+  }
+}
+
 function test() {
-  console.log(typeof videoFile.value, videoFile.value);
+  console.log("Ai test");
 }
 </script>
