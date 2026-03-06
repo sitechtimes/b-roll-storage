@@ -12,7 +12,7 @@ async function getMedia(req: Request, res: Response) {
 
     if (req.query.type) {query.type = req.query.type};
     if (req.query.title) {query.title = { $regex: req.query.title, $options: "i" }};
-    if (req.query.tag) {query.tag = req.query.tag};
+    if (req.query.tags) {query.tags = {$all: (req.query.tags as string).split(",")}};
 
     const media = await Media.find(query)
 

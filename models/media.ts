@@ -11,8 +11,9 @@ export interface IMedia extends mongoose.Document {
 const schemaDefinition = {
   title: { 
     type: String, 
-    required: true 
-    },
+    required: true,
+    trim: true 
+  },
   type: {
     type: String,
     enum: Object.values(MediaType),
