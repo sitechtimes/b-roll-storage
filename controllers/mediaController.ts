@@ -7,12 +7,12 @@ async function index(req: Request, res: Response) {
 }
 
 async function getMedia(req: Request, res: Response) {
-    console.log("sent")
     let query: any = {}
 
     if (req.query.type) {query.type = req.query.type};
-    if (req.query.title) {query.title = { $regex: req.query.title, $options: "i" }};
-    if (req.query.tags) {query.tags = {$all: (req.query.tags as string).split(",")}};
+    if (req.query.title) {query.title = {$regex: req.query.title, $options: "i" }};
+    if (req.query.onetags) {query.tags = {$in: (req.query.onetags as string).split(",")}};
+    if (req.query.alltags) {query.tags = {$all: (req.query.alltags as string).split(",")}};
 
     const media = await Media.find(query)
 
@@ -20,9 +20,15 @@ async function getMedia(req: Request, res: Response) {
 
     res.status(200).send(media);
 };
-
+  
 async function createMedia(req: Request, res: Response) {
-
+    try {
+        const newMedia = new Media(req.body)
+        await newMedia.save()
+        res.json(newMedia)
+    } catch (err) {
+        res.status(500).json(err)
+    }
 };
 
 async function deleteMedia(req: Request, res: Response) {

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{base_url}}/medias/filter?type=image&title=Deniz&tags"
+  url: "{{base_url}}/medias/filter?type=image&title=Deniz&alltags=pigeon,test"
   params:
     - name: type
       value: image
@@ -13,8 +13,8 @@ http:
     - name: title
       value: Deniz
       type: query
-    - name: tags
-      value: ""
+    - name: alltags
+      value: pigeon,test
       type: query
   auth: inherit
 
