@@ -23,6 +23,11 @@ const schemaDefinition = {
         default: UserRole.User, 
         required: true 
     },
+    inventory: {
+        type: [String],
+        default: [] as string[],
+        required: true,
+    },
 } as const;
 
 const userSchema = new mongoose.Schema(schemaDefinition);
