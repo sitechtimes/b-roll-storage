@@ -6,6 +6,15 @@ info:
 http:
   method: POST
   url: "{{base_url}}/medias/"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Josephine Sucks",
+        "type": "image",
+        "url": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.clipartmax.com%2Fmiddle%2Fm2i8b1Z5d3i8G6d3_mad-face-png-for-kids-angry-iphone-emoji%2F&psig=AOvVaw3bvngZbe3fRBI1BSGLqS_B&ust=1773154665463000&source=images&cd=vfe&opi=89978449&ved=0CBYQjRxqFwoTCJDg5oeKk5MDFQAAAAAdAAAAABAE",
+        "tags": ["bad", "person"]
+      }
   auth: inherit
 
 settings:
