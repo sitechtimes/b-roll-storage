@@ -49,6 +49,17 @@
         </div>
         <div class="py-6 w-full">
           <p>Tag holders</p>
+          <div class="dropdown dropdown-bottom dropdown-center">
+            <div tabindex="0" role="button" class="btn m-1">Click ⬇️</div>
+            <ul
+              tabindex="-1"
+              class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              <li v-for="tag in tags" :key="tag">
+                <a @click="console.log(selectDedTags(tag))">{{ tag }}</a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="card-actions">
@@ -67,10 +78,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+const tags: string[] = ["Tag1", "Tag2", "Tag3"];
+
 const hasFile: { value: boolean } = ref(false); // dont delete ascctualy important
 const videoFile = ref<File | null>(null);
 const videoElement = ref<HTMLVideoElement | null>(null);
 const thumbnailImage: { value: string } = ref("");
+
+function selectDedTags(tag: string) {
+  console.log(tag);
+}
 
 const onFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
