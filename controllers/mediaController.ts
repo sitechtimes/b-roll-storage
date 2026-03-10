@@ -32,7 +32,9 @@ async function createMedia(req: Request, res: Response) {
 };
 
 async function deleteMedia(req: Request, res: Response) {
-// by title
+    const media = await Media.findOneAndDelete({ title: req.query.title });
+    if (!media) return res.status(404).json({ error: "Media Not Found" });
+    res.json({ message: "Media successfully deleted" });
 };
 
 async function updateMedia(req: Request, res: Response) {
