@@ -56,7 +56,9 @@
               class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
             >
               <li v-for="tag in tags" :key="tag">
-                <a @click="console.log(selectDedTags(tag))">{{ tag }}</a>
+                <a @click="(console.log(tag), addTagToFinalFile(tag))">{{
+                  tag
+                }}</a>
               </li>
             </ul>
           </div>
@@ -77,6 +79,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+const finalVideoFile: { fileName: string; tags: string[] } = {
+  fileName: "",
+  tags: [],
+};
 
 const tags: string[] = ["Tag1", "Tag2", "Tag3"];
 
@@ -84,10 +90,6 @@ const hasFile: { value: boolean } = ref(false); // dont delete ascctualy importa
 const videoFile = ref<File | null>(null);
 const videoElement = ref<HTMLVideoElement | null>(null);
 const thumbnailImage: { value: string } = ref("");
-
-function selectDedTags(tag: string) {
-  console.log(tag);
-}
 
 const onFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -121,7 +123,15 @@ function captureFrame() {
   }
 }
 
+function addTagToFinalFile(x: string) {
+  if (finalVideoFile.tags.includes(x)) {
+  } else {
+    finalVideoFile.tags.push(x);
+  }
+}
+
 function test() {
   console.log("Ai test");
+  console.log(finalVideoFile);
 }
 </script>
