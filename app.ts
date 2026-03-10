@@ -8,13 +8,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const placeholderRoutes = require("./routes/index");
+const placeholderRoutes = require("./routes/placeholder");
 app.use(`/`, placeholderRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
-
+});
 
 mongoose.connect(process.env.MONGO_URI ?? "").catch((err) => {
   console.error("emerson mongo exploded! do you have .env? ", err);
