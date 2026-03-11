@@ -18,10 +18,12 @@ const schemaDefinition = {
     type: String,
     enum: Object.values(MediaType),
     required: true,
+    immutable: true,
   },
   url: {
     type: String,
     required: true,
+    immutable: true,
   },
   tags: { 
     type: [String], 

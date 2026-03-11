@@ -11,8 +11,8 @@ async function getMedia(req: Request, res: Response) {
 
     if (req.query.type) {query.type = req.query.type};
     if (req.query.title) {query.title = {$regex: req.query.title, $options: "i" }};
-    if (req.query.onetags) {query.tags = {$in: (req.query.onetags as string).split(",")}};
-    if (req.query.alltags) {query.tags = {$all: (req.query.alltags as string).split(",")}};
+    if (req.query.strict == "true") {query.tags = {$all: (req.query.tags as string).split(",")}} 
+    else {query.tags = {$in: (req.query.tags as string).split(",")}};
 
     const media = await Media.find(query)
 
@@ -32,13 +32,25 @@ async function createMedia(req: Request, res: Response) {
 };
 
 async function deleteMedia(req: Request, res: Response) {
-    const media = await Media.findOneAndDelete({ title: req.query.title });
+    const media = await Media.findById(req.params.id);
     if (!media) return res.status(404).json({ error: "Media Not Found" });
-    res.json({ message: "Media successfully deleted" });
+
+    await media.deleteOne()
+    res.status(204).json({ message: "Media successfully deleted" });
 };
 
 async function updateMedia(req: Request, res: Response) {
-// add tags
+    if (!req.body.title && !req.body.tags) return
+    
+    const updates = {
+        title: req.body.title,
+        tags: req.body.tags
+    }
+   
+    const media = await Media.findByIdAndUpdate(req.params.id, updates, {new: true,});
+    if (!media) return res.status(404).json({ error: "Media Not Found" });
+
+    res.json(media)
 };
 
 module.exports = {index, getMedia, createMedia, deleteMedia, updateMedia};
