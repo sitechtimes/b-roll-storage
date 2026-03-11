@@ -21,19 +21,6 @@
               for="videoUpload"
               class="flex flex-col items-center justify-center cursor-pointer"
             >
-              <svg
-                class="w-12 h-12 text-gray-400 mb-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
               <p class="text-sm text-gray-500">Drop video or click to upload</p>
               <p class="text-xs text-gray-400">MP4, MOV, Others</p>
             </label>
@@ -47,18 +34,32 @@
             ></video>
           </div>
         </div>
+        <div v-if="finalVideoFile.tags.length > 0" class="w-full">
+          <div v-for="tag in finalVideoFile.tags" :key="tag">
+            {{ tag }}
+          </div>
+        </div>
+
         <div class="py-6 w-full">
-          <p>Tag holders</p>
-          <div class="dropdown dropdown-bottom dropdown-center">
-            <div tabindex="0" role="button" class="btn m-1">Click ⬇️</div>
+          <div class="dropdown dropdown-bottom w-full">
+            <div
+              tabindex="0"
+              role="button"
+              class="btn btn-outline w-full justify-between"
+            >
+              <span>Select Tags</span>
+            </div>
             <ul
-              tabindex="-1"
-              class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              tabindex="0"
+              class="dropdown-content menu bg-base-100 rounded-lg z-10 w-full mt-2 p-2 shadow-lg border border-base-300"
             >
               <li v-for="tag in tags" :key="tag">
-                <a @click="(console.log(tag), addTagToFinalFile(tag))">{{
-                  tag
-                }}</a>
+                <a
+                  class="rounded-md"
+                  @click="(console.log(tag), addTagToFinalFile(tag))"
+                >
+                  {{ tag }}
+                </a>
               </li>
             </ul>
           </div>
@@ -79,10 +80,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-const finalVideoFile: { fileName: string; tags: string[] } = {
+
+const finalVideoFile = ref<{ fileName: string; tags: string[] }>({
   fileName: "",
   tags: [],
-};
+});
 
 const tags: string[] = ["Tag1", "Tag2", "Tag3"];
 
@@ -105,6 +107,7 @@ const onFileUpload = (event: Event) => {
         videoElement.value.src = e.target.result as string;
       }
     };
+    finalVideoFile.value.fileName = uploadedFile.name;
     reader.readAsDataURL(uploadedFile);
   }
 };
@@ -124,14 +127,14 @@ function captureFrame() {
 }
 
 function addTagToFinalFile(x: string) {
-  if (finalVideoFile.tags.includes(x)) {
+  if (finalVideoFile.value.tags.includes(x)) {
   } else {
-    finalVideoFile.tags.push(x);
+    finalVideoFile.value.tags.push(x);
   }
 }
 
 function test() {
   console.log("Ai test");
-  console.log(finalVideoFile);
+  console.log(finalVideoFile.value);
 }
 </script>
