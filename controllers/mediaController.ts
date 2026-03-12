@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Media, IMedia } from "../models/media";
+import { Media } from "../models/media";
 
 async function index(req: Request, res: Response) {
     const media = await Media.find();

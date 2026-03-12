@@ -20,7 +20,7 @@ const schemaDefinition = {
     required: true,
     immutable: true,
   },
-  url: {
+  path: {
     type: String,
     required: true,
     immutable: true,
