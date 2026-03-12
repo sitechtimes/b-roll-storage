@@ -6,6 +6,12 @@ async function index(req: Request, res: Response) {
     res.json(media);
 }
 
+async function getMediaById(req: Request, res: Response) {
+    const media = await Media.findById(req.params.id)
+    if (!media) return res.status(404).json({ error: "Media Not Found" })
+    res.status(200).send(media);
+};
+
 async function getMedia(req: Request, res: Response) {
     let query: any = {}
 
@@ -33,24 +39,36 @@ async function createMedia(req: Request, res: Response) {
 
 async function deleteMedia(req: Request, res: Response) {
     const media = await Media.findById(req.params.id);
-    if (!media) return res.status(404).json({ error: "Media Not Found" });
+    if (!media) return res.status(404).json({ error: "Media not found" });
 
     await media.deleteOne()
     res.status(204).json({ message: "Media successfully deleted" });
 };
 
 async function updateMedia(req: Request, res: Response) {
-    if (!req.body.title && !req.body.tags) return
-    
-    const updates = {
-        title: req.body.title,
-        tags: req.body.tags
+    if (!req.body) {res.status(404).json({error: "Body not found"})}
+    let updates: any = {}
+
+    if (req.body.title) {updates.title = req.body.title}
+    if (req.body.tags) {
+        const tags = (req.body.tags as string[])
+            .map(tag => tag.trim())
+            .filter(tag => tag.length > 0);
+        if (req.params.operation === 'add') {
+            updates.$addToSet = { tags: { $each: tags } }
+        }
+        else if (req.params.operation === 'subtract') {
+            updates.$pull = { tags: { $in: tags } }
+        }
+        else {
+            res.status(404).json({ error: "Missing operation"})
+        }
     }
-   
-    const media = await Media.findByIdAndUpdate(req.params.id, updates, {new: true,});
-    if (!media) return res.status(404).json({ error: "Media Not Found" });
+    
+    const media = await Media.findByIdAndUpdate(req.params.id, updates, { returnDocument: 'after' });
+    if (!media) return res.status(404).json({ error: "Media not found" });
 
     res.json(media)
 };
 
-module.exports = {index, getMedia, createMedia, deleteMedia, updateMedia};
+module.exports = {index, getMediaById, getMedia, createMedia, deleteMedia, updateMedia}; 

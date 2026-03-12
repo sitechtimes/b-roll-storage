@@ -1,7 +1,7 @@
 info:
   name: Fetch Media by Filter
   type: http
-  seq: 2
+  seq: 3
 
 http:
   method: GET
