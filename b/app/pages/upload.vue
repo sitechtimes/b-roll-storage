@@ -34,9 +34,22 @@
             ></video>
           </div>
         </div>
-        <div v-if="finalVideoFile.tags.length > 0" class="w-full">
-          <div v-for="tag in finalVideoFile.tags" :key="tag">
-            {{ tag }}
+        <div v-if="finalVideoFile.tags.length > 0" class="w-full text-center">
+          <p class="text-sm font-semibold mb-2">Selected Tags:</p>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <span
+              v-for="tag in finalVideoFile.tags"
+              :key="tag"
+              class="badge badge-secondary gap-2 py-3 px-3"
+            >
+              {{ tag }}
+              <button
+                class="btn btn-ghost btn-xs rounded-full hover:bg-red-500 hover:text-white transition cursor-pointer"
+                @click="removeTag(tag)"
+              >
+                ✕
+              </button>
+            </span>
           </div>
         </div>
 
@@ -122,6 +135,16 @@ function captureFrame() {
     if (ctx) {
       ctx.drawImage(videoElement.value, 0, 0);
       thumbnailImage.value = canvas.toDataURL("image/png");
+    }
+  }
+}
+
+function removeTag(x: string) {
+  // test this if it works
+  if (finalVideoFile.value.tags.includes(x)) {
+    const tagToRemove: number = finalVideoFile.value.tags.indexOf(x);
+    if (tagToRemove > -1) {
+      finalVideoFile.value.tags.splice(tagToRemove, 1);
     }
   }
 }
