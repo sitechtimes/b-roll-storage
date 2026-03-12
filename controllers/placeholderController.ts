@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { processImage } from "../utils/ai_processing";
 
 async function getHelloWorld(req: Request, res: Response) {
     res.json("Hello World");
@@ -20,17 +19,13 @@ async function login(req: Request, res: Response) {
 
 async function testAI(req: Request, res: Response) {
     try {
-        if (!req.file) return res.status(400).send('No image uploaded.');
+        const { image, pretrained } = req.body || {};
+        const { processImage } = require('../utils/ai_processing');
 
-        // req.file.path is the location provided by your upload middleware
-        const result = await processImage(req.file.path);
-        
-        res.json({
-            success: true,
-            tags: result // This will contain the "Image Tags" output from the script
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        const tags = processImage({ image, pretrained });
+        res.json({ ok: true, tags });
+    } catch (err) {
+        res.status(500).json({ ok: false, error: String(err) });
     }
 }
 
