@@ -29,20 +29,17 @@ const processImage = (imagePath: string) => {
             if (code !== 0) {
                 return reject(new Error(`Python script failed (code ${code}): ${errorData}`));
             }
-            const out = output.trim();
-            // Expect Python to print a JSON array as the last line. Try to parse it.
-            const lines = out.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-            const last = lines[lines.length - 1] || '';
-            try {
-                const parsed = JSON.parse(last);
-                if (Array.isArray(parsed)) return resolve(parsed.map(String));
-            } catch (e) {
-                // not JSON, fall through
+
+            const lines = output.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+            const tagLine = lines.find(l => l.toLowerCase().startsWith('image tags:'));
+            if (tagLine) {
+                const tagsPart = tagLine.replace(/Image Tags:\s*/i, '');
+                const tags = tagsPart.split(/[\|,]/).map(s => s.trim()).filter(Boolean);
+                return resolve(tags);
             }
-            // fallback: try to extract comma separated from the last printable line
-            if (last.includes(',')) return resolve(last.replace(/[\[\]]/g, '').split(',').map(s => s.trim()).filter(Boolean));
-            // final fallback: return entire stdout as single-element array
-            resolve([out]);
+
+            resolve([output.trim()]);
         });
     });
 };
