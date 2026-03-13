@@ -28,12 +28,14 @@ async function getMedia(req: Request, res: Response) {
 };
   
 async function createMedia(req: Request, res: Response) {
-    try {
-        const newMedia = new Media(req.body)
-        await newMedia.save()
-        res.json(newMedia)
-    } catch (err) {
-        res.status(500).json(err)
+    for (let i = 0; i < req.body.length; i++ ) {
+        try {
+            const newMedia = new Media(req.body[i])
+            await newMedia.save()
+            res.json(newMedia)
+        } catch (err) {
+            res.status(500).json(err)
+        }
     }
 };
 
