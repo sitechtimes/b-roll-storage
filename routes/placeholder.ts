@@ -8,4 +8,6 @@ router.get(`/article/:title`, placeholderController.getArticleByTitle);
 
 router.post(`/login`, placeholderController.login); 
 
+router.post(`/testAI`, placeholderController.testAI); 
+
 module.exports = router;

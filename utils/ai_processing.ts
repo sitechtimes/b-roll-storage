@@ -44,6 +44,12 @@ const processImage = (imagePath: string) => {
     });
 };
 
-function processVideo() {}
+/**
+ * Runs RAM+ inference using the venv's python executable, for the first, middle, and last frames, and puts together the tags
+ * @param {string} videoPath - Absolute path to the video from the request
+ */
+function processVideo(videoPath: string) => {
+
+};
 
 module.exports = { processImage, processVideo };
