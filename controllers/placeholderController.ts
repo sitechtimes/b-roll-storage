@@ -17,18 +17,17 @@ async function login(req: Request, res: Response) {
     } catch (error) {}
 };
 
-/*
+
 async function testAI(req: Request, res: Response) {
     try {
         const { image } = req.body || {};
-        const { processImage } = require('../utils/ai_processing');
+        const { processVideo } = require('../utils/ai_processing');
 
-        const tags = await processImage(image);
+        const tags = await processVideo(image);
         res.json({ ok: true, tags });
     } catch (err) {
         res.status(500).json({ ok: false, error: String(err) });
     }
 }
-*/
 
-module.exports = {getHelloWorld, getArticleByTitle, login}
+module.exports = {getHelloWorld, getArticleByTitle, login, testAI}
