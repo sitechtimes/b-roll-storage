@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { UserRole } from "./userRole";
+import { UserRole } from "../utils/userRole";
 
 const schemaDefinition = {
     name: { 

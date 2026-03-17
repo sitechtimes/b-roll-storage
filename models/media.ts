@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MediaType } from "./mediaType"
+import { MediaType } from "../utils/mediaType"
 
 export interface IMedia extends mongoose.Document {
   title: string;
