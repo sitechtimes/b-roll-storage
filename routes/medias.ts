@@ -7,6 +7,6 @@ router.get(`/filter`, mediaController.getMedia);
 router.get('/:id', mediaController.getMediaById)
 router.post('/', mediaController.createMedia)
 router.delete('/:id', mediaController.deleteMedia)
-router.put('/:id/:operation', mediaController.updateMedia)
+router.patch('/:id/:operation', mediaController.updateMedia)
 
 module.exports = router;
