@@ -2,3 +2,7 @@ for the video uploads so i dont forget make a sort of tag system that when uploa
 and then when you pick tags it adds to object 
 
 uploading file is able to grab it and display a preview for it now. no backend compabilty as of now
+
+
+3/17/26
+bruno, copy backend folder into it and use thoose routes- setup mongodb connection to load up stuff for front end testing at the least
