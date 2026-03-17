@@ -4,7 +4,7 @@ info:
   seq: 6
 
 http:
-  method: PUT
+  method: PATCH
   url: "{{base_url}}/medias/69b17eacc48caa9c79b69cae/subtract"
   body:
     type: json
