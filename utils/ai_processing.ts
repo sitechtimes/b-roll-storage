@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const crypto = require('crypto');
+const ffmpeg = require('ffmpeg');
 
 /**
  * Runs RAM+ inference using the venv's python executable
@@ -83,9 +84,8 @@ async function processVideo(videoPath: string): Promise<string[]> {
         const out = tmpFramePath();
         return new Promise((resolve, reject) => {
             console.log("ahreifiogjfw")
-            const ff = spawn('ffmpeg', ['-ss', String(timeSec), '-i', videoPath, '-frames:v', '1', '-q:v', '2', '-y', out], { stdio: ['ignore', 'ignore', 'pipe'] });
             var process = new ffmpeg(videoPath);
-            process.then(function (video) {
+            process.then(function (video: any) {
                 video.addCommand('-ss', timeSec)
                 video.addCommand('-vframes', '1')
                 video.addCommand('-q:v', '2')
@@ -94,8 +94,6 @@ async function processVideo(videoPath: string): Promise<string[]> {
                     if (error) return reject(error);
                     return resolve(out);
                 });
-            } catch (err) {
-                return reject(err);
             });
             console.log("nvreiuhgiord")
             /*
