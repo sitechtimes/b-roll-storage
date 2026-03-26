@@ -1,10 +1,20 @@
 <template>
-  <div class="library-container">
-    <h1>Media Library</h1>
-    <div class="media-grid">
-      <div v-for="item in media" :key="item._id.$oid" class="media-item">
-        <img :src="item.path" :alt="item.title" class="media-image" />
-        <div class="media-title">{{ item.title }}</div>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Media Library</h1>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <div
+        v-for="item in media"
+        :key="item._id.$oid"
+        class="border border-gray-300 rounded-lg overflow-hidden text-center"
+      >
+        <img
+          :src="item.path"
+          :alt="item.title"
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-2 font-bold">{{ item.title }}</div>
       </div>
     </div>
   </div>
@@ -37,33 +47,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-.library-container {
-  padding: 2rem;
-}
-
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.media-item {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  overflow: hidden;
-  text-align: center;
-}
-
-.media-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.media-title {
-  padding: 0.5rem;
-  font-weight: bold;
-}
-</style>
