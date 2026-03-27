@@ -4,10 +4,4 @@ dev.env
 
 broll/
 
-ai-garbage/recognize-anything/pretrained/
-ai-garbage/recognize-anything/pretrained/*.pth
-ai-garbage/recognize-anything/**/imgs/
-ai-garbage/recognize-anything/outputs/
-ai-garbage/recognize-anything/__pycache__/
-ai-garbage/recognize-anything/.ipynb_checkpoints/
-ai-garbage/recognize-anything/.venv/
+recognize-anything/
