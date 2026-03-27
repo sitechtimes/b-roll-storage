@@ -9,7 +9,8 @@
       <div
         v-for="item in media"
         :key="item._id.$oid"
-        class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out"
+        class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
+        @click="console.log('test')"
       >
         <img
           :src="item.path"

@@ -6,3 +6,6 @@ uploading file is able to grab it and display a preview for it now. no backend c
 
 3/17/26
 bruno, copy backend folder into it and use thoose routes- setup mongodb connection to load up stuff for front end testing at the least
+
+uploading videos so far doesnt give it thumnbnails | should library give you a thumbnail or allow you to play?
+uploading the videos doesnt do anyhting with the actual file | sort of a backend issue but also front end

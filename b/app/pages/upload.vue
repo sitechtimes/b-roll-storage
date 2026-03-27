@@ -67,10 +67,7 @@
               class="dropdown-content menu bg-base-100 rounded-lg z-10 w-full mt-2 p-2 shadow-lg border border-base-300"
             >
               <li v-for="tag in tags" :key="tag">
-                <a
-                  class="rounded-md"
-                  @click="(console.log(tag), addTagToFinalFile(tag))"
-                >
+                <a class="rounded-md" @click="addTagToFinalFile(tag)">
                   {{ tag }}
                 </a>
               </li>
@@ -81,7 +78,7 @@
         <div class="card-actions">
           <button
             class="btn btn-primary absolute bottom-4 left-4 right-4"
-            @click="test()"
+            @click="afterSubmit"
           >
             Upload
           </button>
@@ -156,8 +153,13 @@ function addTagToFinalFile(x: string) {
   }
 }
 
-function test() {
-  console.log("Ai test");
-  console.log(finalVideoFile.value);
+function afterSubmit() {
+  finalVideoFile.value = { fileName: "", tags: [] };
+  hasFile.value = false;
+  videoFile.value = null;
+  if (videoElement.value) {
+    videoElement.value.src = "";
+  }
+  thumbnailImage.value = "";
 }
 </script>
