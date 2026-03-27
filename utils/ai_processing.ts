@@ -48,7 +48,7 @@ const processImage = (imagePath: string) => {
 };
 
 /**
- * Runs RAM+ inference using the venv's python executable, for the first, middle, and last frames, and puts together the tags
+ * Runs RAM+ inference using the venv's python executable, for the first, 1/3, 2/3, and last frames, and puts together the tags
  * @param {string} videoPath - Absolute path to the video from the request
  */
 async function processVideo(videoPath: string): Promise<string[]> {
