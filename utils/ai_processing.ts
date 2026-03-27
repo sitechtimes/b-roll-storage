@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const crypto = require('crypto');
-const ffmpeg = require('ffmpeg');
 
 /**
  * Runs RAM+ inference using the venv's python executable
@@ -83,28 +82,26 @@ async function processVideo(videoPath: string): Promise<string[]> {
     async function extractFrameAt(timeSec: number): Promise<string> {
         const out = tmpFramePath();
         return new Promise((resolve, reject) => {
-            console.log("ahreifiogjfw")
-            var process = new ffmpeg(videoPath);
-            process.then(function (video: any) {
-                video.addCommand('-ss', timeSec)
-                video.addCommand('-vframes', '1')
-                video.addCommand('-q:v', '2')
-                video.addCommand('-y', out)
-                video.save(out, (error: Error | null, file: string) => {
-                    if (error) return reject(error);
-                    return resolve(out);
-                });
-            });
-            console.log("nvreiuhgiord")
-            /*
+            // determine ffmpeg binary: env > ffmpeg-static > 'ffmpeg'
+            let ffmpegCmd: string | undefined = process.env.FFMPEG_PATH;
+            if (!ffmpegCmd) {
+                try { ffmpegCmd = require('ffmpeg-static'); } catch (e) { /* not installed */ }
+            }
+            if (!ffmpegCmd) ffmpegCmd = 'ffmpeg';
+
+            // place -ss before -i for fast seek
+            const args = ['-ss', String(timeSec), '-i', videoPath, '-frames:v', '1', '-q:v', '2', '-f', 'image2', '-y', out];
+            const ff = spawn(ffmpegCmd, args, { stdio: ['ignore', 'ignore', 'pipe'] });
             let ferr = '';
             ff.stderr.on('data', (d: Buffer) => ferr += d.toString());
-            ff.on('error', (err: Error) => reject(err));
+            ff.on('error', (err: Error) => {
+                const msg = `Failed to start ffmpeg ('${ffmpegCmd}'). Ensure ffmpeg is installed, on PATH or set FFMPEG_PATH. Original error: ${err.message}`;
+                return reject(new Error(msg));
+            });
             ff.on('close', (code: number) => {
                 if (code === 0) return resolve(out);
-                reject(new Error(`ffmpeg failed (${code}): ${ferr}`));
+                return reject(new Error(`ffmpeg failed (${code}): ${ferr}`));
             });
-            */
         });
     }
 
@@ -131,14 +128,12 @@ async function processVideo(videoPath: string): Promise<string[]> {
         }
 
         const { processImage } = require('./ai_processing');
-        console.log("BLAHHH")
         const tagArrays: string[][] = [];
         for (const f of frames) {
-            console.log("JUFHREIFOE")
             try {
                 const tags = await processImage(f);
                 if (Array.isArray(tags)) tagArrays.push(tags);
-                console.log(tags);
+                // console.log(tags);
             } catch (e) {}
         }
 
