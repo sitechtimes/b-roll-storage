@@ -17,7 +17,7 @@ async function login(req: Request, res: Response) {
     } catch (error) {}
 };
 
-
+/*
 async function testAI(req: Request, res: Response) {
     try {
         const { image } = req.body || {};
@@ -29,5 +29,6 @@ async function testAI(req: Request, res: Response) {
         res.status(500).json({ ok: false, error: String(err) });
     }
 }
+*/
 
 module.exports = {getHelloWorld, getArticleByTitle, login, testAI}
