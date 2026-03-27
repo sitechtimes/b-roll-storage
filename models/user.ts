@@ -23,9 +23,24 @@ const schemaDefinition = {
         default: UserRole.User, 
         required: true 
     },
+    inventory: {
+        type: [String],
+        default: [] as string[],
+        required: true,
+    },
 } as const;
 
-const userSchema = new mongoose.Schema(schemaDefinition);
+const userSchema = new mongoose.Schema(schemaDefinition, {
+    toJSON: {
+        transform(doc, ret: any, options) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        delete ret.password;
+        delete ret.verificationCode;
+        },
+    },
+});
 
 const User = mongoose.model("User", userSchema);
 

@@ -11,24 +11,37 @@ export interface IMedia extends mongoose.Document {
 const schemaDefinition = {
   title: { 
     type: String, 
-    required: true 
-    },
+    required: true,
+    trim: true 
+  },
   type: {
     type: String,
     enum: Object.values(MediaType),
     required: true,
+    immutable: true,
   },
-  url: {
+  path: {
     type: String,
     required: true,
+    immutable: true,
   },
   tags: { 
     type: [String], 
-    required: true 
+    default: [] as string[],
+    required: true,
     }, 
 } as const;
 
-const mediaSchema = new mongoose.Schema<IMedia>(schemaDefinition);
+const mediaSchema = new mongoose.Schema<IMedia>(schemaDefinition, {
+  toJSON: {
+    transform(doc, ret: any) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      delete ret.slug_history;
+    },
+  },
+});
 
 const Media = mongoose.model<IMedia>("Media", mediaSchema);
 
