@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
-import { MediaType } from "./mediaType"
+import { MediaType } from "../utils/mediaType";
 
 export interface IMedia extends mongoose.Document {
   title: string;
   type: MediaType;
   url: string;
-  tags: string[]; 
+  tags: string[];
 }
 
 const schemaDefinition = {
-  title: { 
-    type: String, 
+  title: {
+    type: String,
     required: true,
-    trim: true 
+    trim: true,
   },
   type: {
     type: String,
@@ -25,11 +25,11 @@ const schemaDefinition = {
     required: true,
     immutable: true,
   },
-  tags: { 
-    type: [String], 
+  tags: {
+    type: [String],
     default: [] as string[],
     required: true,
-    }, 
+  },
 } as const;
 
 const mediaSchema = new mongoose.Schema<IMedia>(schemaDefinition, {
@@ -46,3 +46,4 @@ const mediaSchema = new mongoose.Schema<IMedia>(schemaDefinition, {
 const Media = mongoose.model<IMedia>("Media", mediaSchema);
 
 export { Media };
+
