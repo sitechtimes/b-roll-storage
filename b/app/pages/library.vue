@@ -3,6 +3,18 @@
     <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">
       Media Library
     </h1>
+    <dialog id="my_modal_1" class="modal" open>
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Hello!</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <!-- if there is a button in form, it will close the modal -->
+            <button class="btn">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     >
@@ -10,7 +22,7 @@
         v-for="item in media"
         :key="item._id.$oid"
         class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
-        @click="console.log('test')"
+        @click="openLibraryItem()"
       >
         <img
           :src="item.path"
@@ -38,7 +50,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+let modalView = ref(false);
+function openLibraryItem() {
+  modalView.value = true;
+}
 
+/* below is just for the test data file in here for now */
 interface Media {
   _id: {
     $oid: string;
