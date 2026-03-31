@@ -9,3 +9,4 @@ bruno, copy backend folder into it and use thoose routes- setup mongodb connecti
 
 uploading videos so far doesnt give it thumnbnails | should library give you a thumbnail or allow you to play?
 uploading the videos doesnt do anyhting with the actual file | sort of a backend issue but also front end
+consoles errors from the fake data or smething in browser fix later
