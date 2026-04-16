@@ -30,7 +30,7 @@ export const currentUser = (
     req.currentUser = payload;
   } catch (e) {
     console.error(e);
-    return void res.status(401).json({ message: "Invalid" });
+    return void res.status(401).json({ message: "Token invalid" });
   }
 
   next();

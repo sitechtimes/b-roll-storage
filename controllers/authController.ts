@@ -1,17 +1,27 @@
 import { Response, Request } from "express";
 import { User } from "../models/user";
+import { UserRole } from "../utils/userRole";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 async function signUp(req: Request, res: Response) {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   if (await User.findOne({ email })) {
     return res.status(409).json({ error: "Email is already in use" });
   }
 
+  const assignedRole = Object.values(UserRole).includes(role)
+    ? role
+    : UserRole.User;
+
   try {
-    const newUser = await User.create({ name, email, password });
+    const newUser = await User.create({
+      name,
+      email,
+      password,
+      role: assignedRole,
+    });
     res.status(200).json(newUser);
   } catch {
     res.status(500).json({ error: "Sign up failed" });

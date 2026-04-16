@@ -6,7 +6,7 @@ async function index(req: Request, res: Response) {
   res.json(user);
 }
 
-async function userById(req: Request, res: Response) {
+async function getUserById(req: Request, res: Response) {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json("User not found");
   res.json(user);
@@ -28,3 +28,9 @@ async function getUser(req: Request, res: Response) {
 
   res.status(200).json(user);
 }
+
+module.exports = {
+  index,
+  getUserById,
+  getUser,
+};

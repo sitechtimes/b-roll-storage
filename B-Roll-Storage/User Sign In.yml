@@ -6,6 +6,13 @@ info:
 http:
   method: POST
   url: "{{base_url}}/auth/signin"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "jarvisli0710@gmail.com",
+        "password": "testing123"
+      }
   auth: inherit
 
 settings:

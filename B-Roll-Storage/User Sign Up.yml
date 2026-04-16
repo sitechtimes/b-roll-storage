@@ -8,7 +8,13 @@ http:
   url: "{{base_url}}/auth/signup"
   body:
     type: json
-    data: ""
+    data: |-
+      {
+        "name": "ActuallyTheRealAdminForReal",
+        "email": "testing123@gmail.com",
+        "password": "testing123",
+        "role": "admin"
+      }
   auth: inherit
 
 settings:

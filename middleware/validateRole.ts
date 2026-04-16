@@ -9,6 +9,6 @@ export const requireRole =
     if (req.currentUser.role === role) {
       next();
     } else {
-      res.sendStatus(403);
+      res.sendStatus(403).json("Admin required");
     }
   };
