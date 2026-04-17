@@ -6,7 +6,18 @@ const userController = require("../controllers/userController");
 const router = express.Router();
 
 router.get(`/`, requireAuth, requireRole(UserRole.Admin), userController.index);
-router.get(`/filter`, userController.getUser);
-router.get("/:id", userController.getUserById);
+router.get(
+  `/filter`,
+  requireAuth,
+  requireRole(UserRole.Admin),
+  userController.getUser,
+);
+router.get(`/:id`, requireAuth, userController.getUserById);
+router.delete(
+  `/:id`,
+  requireAuth,
+  requireRole(UserRole.Admin),
+  userController.deleteUser,
+);
 
 module.exports = router;
