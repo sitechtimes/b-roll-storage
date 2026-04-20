@@ -137,7 +137,6 @@ function captureFrame() {
 }
 
 function removeTag(x: string) {
-  // test this if it works
   if (finalVideoFile.value.tags.includes(x)) {
     const tagToRemove: number = finalVideoFile.value.tags.indexOf(x);
     if (tagToRemove > -1) {
