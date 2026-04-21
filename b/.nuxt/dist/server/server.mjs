@@ -1,1 +1,0 @@
-export { default } from "file:///C:/Users/constantine.nagornuk/Documents/b-roll-storage/b/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs"
