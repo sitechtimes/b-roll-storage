@@ -11,6 +11,11 @@
         class="rounded-md px-2.5 py-1 text-sm font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
         >Library</NuxtLink
       >
+      <NuxtLink
+        to="/login"
+        class="rounded-md px-2.5 py-1 text-sm font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+        >Login</NuxtLink
+      >
     </nav>
   </header>
   <div>

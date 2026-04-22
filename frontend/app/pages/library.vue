@@ -49,11 +49,18 @@
 import { ref, onMounted } from "vue";
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
+let history = ref<string[]>([]);
 // leave the type any for now gotta test if it works
+
+function viewHistory(title: string) {
+  history.value.push(title);
+  console.log(history.value);
+  // remind me of whatever i need to add here
+}
 function openLibraryItem(x: any) {
   modalView.value = true;
   selectedItem.value = x;
-  console.log(x);
+  viewHistory(x.title);
 }
 function closeLibraryItem() {
   modalView.value = false;
