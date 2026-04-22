@@ -1,15 +1,18 @@
-import { Request, Response } from "express";
+import { Request, RequestParamHandler, Response } from "express";
 import { User } from "../models/user";
+import { UserRole } from "../utils/userRole";
+import { currentUser } from "../middleware/currentUser";
+import bcrypt from "bcrypt";
 
 async function index(req: Request, res: Response) {
   const user = await User.find();
-  res.json(user);
+  return res.json(user);
 }
 
 async function getUserById(req: Request, res: Response) {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json("User not found");
-  res.json(user);
+  return res.json(user);
 }
 
 async function getUser(req: Request, res: Response) {
@@ -26,7 +29,7 @@ async function getUser(req: Request, res: Response) {
 
   if (!user) return res.status(404).json({ error: "User Not Found" });
 
-  res.status(200).json(user);
+  return res.status(200).json(user);
 }
 
 async function deleteUser(req: Request, res: Response) {
@@ -34,40 +37,94 @@ async function deleteUser(req: Request, res: Response) {
   if (!user) return res.status(404).json({ error: "User not found" });
 
   await user.deleteOne();
-  res.status(204).json({ message: "User successfully deleted" });
+  return res.status(204).json({ message: "User successfully deleted" });
 }
 
 async function updateUser(req: Request, res: Response) {
   if (!req.body) {
-    res.status(404).json({ error: "Body not found" });
+    return res.status(404).json({ error: "Body not found" });
   }
   let updates: any = {};
+  let warnings: string[] = [];
 
-  const user = await User.findById(req.params.id);
-  if (!user) res.status(404).json({ error: "User not found" });
+  const thisUser = await User.findById(req.params.id);
+  if (!thisUser) return res.status(404).json({ error: "User not found" });
+
+  if (
+    req.currentUser?.id !== thisUser?.id &&
+    req.currentUser?.role !== "admin"
+  ) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
+  if (req.body.role) {
+    if (req.currentUser?.role === "admin") {
+      updates.role = req.body.role;
+    } else {
+      warnings.push("Admin access is required to change roles");
+    }
+  }
 
   if (req.body.name) {
     updates.name = req.body.name;
   }
+
   if (req.body.inventory) {
     const inventory = (req.body.inventory as string[])
       .map((inventory) => inventory.trim())
       .filter((inventory) => inventory.length > 0);
-    while (user && user.inventory.length < 20) {
-      //   updates.$addToSet = { tags: { $each: tags } };
-      // } else if (req.params.operation === "subtract") {
-      //   updates.$pull = { tags: { $in: tags } };
-      // } else {
-      //   res.status(404).json({ error: "Missing operation" });
-    }
+
+    await User.findByIdAndUpdate(req.params.id, {
+      $pull: { inventory: { $in: inventory } },
+    });
+
+    updates.$push = {
+      inventory: { $each: inventory, $position: 0, $slice: 20 },
+    };
   }
 
-  // const media = await Media.findByIdAndUpdate(req.params.id, updates, {
-  //   returnDocument: "after",
-  // });
-  // if (!media) return res.status(404).json({ error: "Media not found" });
+  const user = await User.findByIdAndUpdate(req.params.id, updates, {
+    returnDocument: "after",
+  });
+  if (!user) return res.status(404).json({ error: "User not found" });
 
-  // res.json(media);
+  return res.json({ user, warnings });
+}
+
+async function updatePassword(req: Request, res: Response) {
+  if (!req.body.password) {
+    return res.status(404).json({ error: "New password not found" });
+  }
+
+  const thisUser = await User.findById(req.params.id);
+  if (!thisUser) return res.status(404).json({ error: "User not found" });
+
+  if (
+    req.currentUser?.id !== thisUser?.id &&
+    req.currentUser?.role !== "admin"
+  ) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
+  const newPassword = req.body.password.trim();
+
+  if (await bcrypt.compare(req.body.password, thisUser.password)) {
+    return res
+      .status(409)
+      .json({ error: "Password cannot be the same as the previous one" });
+  }
+
+  // const newPassword = await bcrypt.hash(req.body.password.trim(), 10);
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { password: newPassword },
+    {
+      returnDocument: "after",
+    },
+  );
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  return res.json(user);
 }
 
 module.exports = {
@@ -75,4 +132,6 @@ module.exports = {
   getUserById,
   getUser,
   deleteUser,
+  updateUser,
+  updatePassword,
 };

@@ -22,9 +22,9 @@ async function signUp(req: Request, res: Response) {
       password,
       role: assignedRole,
     });
-    res.status(200).json(newUser);
+    return res.status(200).json(newUser);
   } catch {
-    res.status(500).json({ error: "Sign up failed" });
+    return res.status(500).json({ error: "Sign up failed" });
   }
 }
 
@@ -48,7 +48,7 @@ async function signIn(req: Request, res: Response) {
 
   const userJWT = jwt.sign(payload, process.env.JWT_KEY!, { expiresIn: "6h" });
 
-  res.status(200).send({
+  return res.status(200).send({
     ...currentUser.toJSON(),
     token: userJWT,
   });
@@ -56,7 +56,7 @@ async function signIn(req: Request, res: Response) {
 }
 
 async function signOut(req: Request, res: Response) {
-  res.status(200).json({ message: "Signed out successfully" });
+  return res.status(200).json({ message: "Signed out successfully" });
   // this returns a success message, the actual removal of the token occurs in the frontend
 }
 

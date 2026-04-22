@@ -19,5 +19,7 @@ router.delete(
   requireRole(UserRole.Admin),
   userController.deleteUser,
 );
+router.patch("/:id", requireAuth, userController.updateUser);
+router.patch("/password/:id", requireAuth, userController.updatePassword);
 
 module.exports = router;
