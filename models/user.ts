@@ -8,6 +8,7 @@ export interface IUser extends mongoose.Document {
   password: string;
   role: UserRole;
   inventory: string[];
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const schemaDefinition = {
@@ -20,6 +21,7 @@ const schemaDefinition = {
     type: String,
     required: true,
     trim: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -60,6 +62,12 @@ userSchema.pre("save", async function () {
     throw err;
   }
 });
+
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string,
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword.trim(), this.password);
+};
 
 const User = mongoose.model<IUser>("User", userSchema);
 

@@ -91,10 +91,23 @@ async function updateUser(req: Request, res: Response) {
   return res.json({ user, warnings });
 }
 
-async function updatePassword(req: Request, res: Response) {
+async function changePassword(req: Request, res: Response) {
   if (!req.body.password) {
     return res.status(404).json({ error: "New password not found" });
   }
+
+  if (!req.body.currentPassword) {
+    return res.status(404).json({ error: "Old password not found" });
+  }
+
+  if (req.body.password.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters" });
+  }
+
+  const oldPassword = req.body.currentPassword.trim();
+  const newPassword = req.body.password.trim();
 
   const thisUser = await User.findById(req.params.id);
   if (!thisUser) return res.status(404).json({ error: "User not found" });
@@ -106,25 +119,24 @@ async function updatePassword(req: Request, res: Response) {
     return res.status(403).json({ error: "Not authorized" });
   }
 
-  const newPassword = req.body.password.trim();
+  if (!(await thisUser.comparePassword(oldPassword))) {
+    return res.status(403).json({ error: "Current password does not match" });
+  }
 
-  if (await bcrypt.compare(req.body.password, thisUser.password)) {
+  if (await thisUser.comparePassword(req.body.password)) {
     return res
       .status(409)
       .json({ error: "Password cannot be the same as the previous one" });
   }
 
-  // const newPassword = await bcrypt.hash(req.body.password.trim(), 10);
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    { password: newPassword },
-    {
-      returnDocument: "after",
-    },
-  );
-  if (!user) return res.status(404).json({ error: "User not found" });
+  try {
+    thisUser.password = newPassword;
+    await thisUser.save();
+  } catch (err) {
+    return res.status(500).json({ error: "Save failed" });
+  }
 
-  return res.json(user);
+  return res.json(thisUser);
 }
 
 module.exports = {
@@ -133,5 +145,5 @@ module.exports = {
   getUser,
   deleteUser,
   updateUser,
-  updatePassword,
+  changePassword,
 };

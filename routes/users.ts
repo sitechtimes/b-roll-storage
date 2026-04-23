@@ -20,6 +20,10 @@ router.delete(
   userController.deleteUser,
 );
 router.patch("/:id", requireAuth, userController.updateUser);
-router.patch("/password/:id", requireAuth, userController.updatePassword);
+router.patch(
+  "/change-password/:id",
+  requireAuth,
+  userController.changePassword,
+);
 
 module.exports = router;
