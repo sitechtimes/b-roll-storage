@@ -1,8 +1,6 @@
 import { Request, RequestParamHandler, Response } from "express";
 import { User } from "../models/user";
 import { UserRole } from "../utils/userRole";
-import { currentUser } from "../middleware/currentUser";
-import bcrypt from "bcrypt";
 
 async function index(req: Request, res: Response) {
   const user = await User.find();
@@ -18,7 +16,10 @@ async function getUserById(req: Request, res: Response) {
 async function getUser(req: Request, res: Response) {
   let query: any = {};
 
-  if (req.query.role) {
+  if (
+    req.query.role &&
+    Object.values(UserRole).includes(req.query.role as UserRole)
+  ) {
     query.role = req.query.role;
   }
   if (req.query.name) {
@@ -27,23 +28,25 @@ async function getUser(req: Request, res: Response) {
 
   const user = await User.find(query);
 
-  if (!user) return res.status(404).json({ error: "User Not Found" });
+  if (user.length === 0) {
+    return res.status(404).json({ error: "User Not Found" });
+  }
 
   return res.status(200).json(user);
 }
 
 async function deleteUser(req: Request, res: Response) {
-  const user = await User.findById(req.params.id);
+  const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return res.status(404).json({ error: "User not found" });
 
-  await user.deleteOne();
-  return res.status(204).json({ message: "User successfully deleted" });
+  return res.status(200).json({ message: "User successfully deleted" });
 }
 
 async function updateUser(req: Request, res: Response) {
-  if (!req.body) {
-    return res.status(404).json({ error: "Body not found" });
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "Empty body" });
   }
+
   let updates: any = {};
   let warnings: string[] = [];
 
@@ -58,10 +61,14 @@ async function updateUser(req: Request, res: Response) {
   }
 
   if (req.body.role) {
-    if (req.currentUser?.role === "admin") {
-      updates.role = req.body.role;
+    if (Object.values(UserRole).includes(req.body.role as UserRole)) {
+      if (req.currentUser?.role === "admin") {
+        updates.role = req.body.role;
+      } else {
+        warnings.push("Admin access is required to change roles");
+      }
     } else {
-      warnings.push("Admin access is required to change roles");
+      warnings.push("Role does not exist");
     }
   }
 
@@ -70,16 +77,20 @@ async function updateUser(req: Request, res: Response) {
   }
 
   if (req.body.inventory) {
-    const inventory = (req.body.inventory as string[])
-      .map((inventory) => inventory.trim())
-      .filter((inventory) => inventory.length > 0);
+    const inventory = [
+      ...new Set(
+        (req.body.inventory as string[])
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0),
+      ),
+    ];
 
-    await User.findByIdAndUpdate(req.params.id, {
+    updates = {
+      ...updates,
       $pull: { inventory: { $in: inventory } },
-    });
-
-    updates.$push = {
-      inventory: { $each: inventory, $position: 0, $slice: 20 },
+      $push: {
+        inventory: { $each: inventory, $position: 0, $slice: 20 },
+      },
     };
   }
 
@@ -96,17 +107,11 @@ async function changePassword(req: Request, res: Response) {
     return res.status(404).json({ error: "New password not found" });
   }
 
-  if (!req.body.currentPassword) {
-    return res.status(404).json({ error: "Old password not found" });
-  }
-
   if (req.body.password.length < 8) {
     return res
       .status(400)
       .json({ error: "Password must be at least 8 characters" });
   }
-
-  const oldPassword = req.body.currentPassword.trim();
   const newPassword = req.body.password.trim();
 
   const thisUser = await User.findById(req.params.id);
@@ -119,14 +124,20 @@ async function changePassword(req: Request, res: Response) {
     return res.status(403).json({ error: "Not authorized" });
   }
 
-  if (!(await thisUser.comparePassword(oldPassword))) {
-    return res.status(403).json({ error: "Current password does not match" });
+  if (req.currentUser?.role !== "admin") {
+    if (!req.body.currentPassword) {
+      return res.status(404).json({ error: "Old password not found" });
+    }
+
+    const oldPassword = req.body.currentPassword.trim();
+
+    if (!(await thisUser.comparePassword(oldPassword))) {
+      return res.status(403).json({ error: "Current password does not match" });
+    }
   }
 
-  if (await thisUser.comparePassword(req.body.password)) {
-    return res
-      .status(409)
-      .json({ error: "Password cannot be the same as the previous one" });
+  if (await thisUser.comparePassword(newPassword)) {
+    return res.status(409).json({ error: "Password cannot be the same" });
   }
 
   try {

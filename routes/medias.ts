@@ -21,7 +21,7 @@ router.delete(
   mediaController.deleteMedia,
 );
 router.patch(
-  "/:id/:operation",
+  "/:id",
   requireAuth,
   requireRole(UserRole.Admin),
   mediaController.updateMedia,

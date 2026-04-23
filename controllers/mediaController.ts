@@ -15,47 +15,48 @@ async function getMediaById(req: Request, res: Response) {
 async function getMedia(req: Request, res: Response) {
   let query: any = {};
 
-  if (req.query.type) {
+  if (req.query.type && ["image", "video"].includes(req.query.type as string)) {
     query.type = req.query.type;
   }
   if (req.query.title) {
     query.title = { $regex: req.query.title, $options: "i" };
   }
-  if (req.query.strict == "true") {
-    query.tags = { $all: (req.query.tags as string).split(",") };
-  } else {
-    query.tags = { $in: (req.query.tags as string).split(",") };
+  if (req.query.tags) {
+    if (req.query.strict == "true") {
+      query.tags = { $all: (req.query.tags as string).split(",") };
+    } else {
+      query.tags = { $in: (req.query.tags as string).split(",") };
+    }
   }
 
   const media = await Media.find(query);
 
-  if (!media) return res.status(404).json({ error: "Media Not Found" });
+  if (media.length === 0) {
+    return res.status(404).json({ error: "Media Not Found" });
+  }
 
   return res.status(200).json(media);
 }
 
 async function createMedia(req: Request, res: Response) {
-  for (let i = 0; i < req.body.length; i++) {
-    try {
-      const newMedia = await Media.create(req.body[i]);
-      return res.status(200).json(newMedia);
-    } catch (err) {
-      return res.status(500).json(err);
-    }
+  try {
+    const newMedia = await Media.insertMany(req.body);
+    return res.status(200).json(newMedia);
+  } catch (err) {
+    return res.status(500).json(err);
   }
 }
 
 async function deleteMedia(req: Request, res: Response) {
-  const media = await Media.findById(req.params.id);
+  const media = await Media.findByIdAndDelete(req.params.id);
   if (!media) return res.status(404).json({ error: "Media not found" });
 
-  await media.deleteOne();
-  return res.status(204).json({ message: "Media successfully deleted" });
+  return res.status(200).json({ message: "Media successfully deleted" });
 }
 
 async function updateMedia(req: Request, res: Response) {
-  if (!req.body) {
-    return res.status(404).json({ error: "Body not found" });
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "Empty body" });
   }
   let updates: any = {};
 
@@ -63,12 +64,16 @@ async function updateMedia(req: Request, res: Response) {
     updates.title = req.body.title;
   }
   if (req.body.tags) {
-    const tags = (req.body.tags as string[])
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-    if (req.params.operation === "add") {
+    const tags = [
+      ...new Set(
+        (req.body.tags as string[])
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+      ),
+    ];
+    if (req.query.operation === "add") {
       updates.$addToSet = { tags: { $each: tags } };
-    } else if (req.params.operation === "subtract") {
+    } else if (req.query.operation === "subtract") {
       updates.$pull = { tags: { $in: tags } };
     } else {
       return res.status(404).json({ error: "Missing operation" });
