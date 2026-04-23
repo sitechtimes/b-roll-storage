@@ -5,11 +5,11 @@
     <div class="card bg-base-100 w-full max-w-md shadow-sm">
       <div class="card-body p-8 md:p-10">
         <h1 class="text-3xl font-bold text-center text-base-content">Login</h1>
-        <p class="text-sm text-base-content/70 text-center mt-1 mb-2">
+        <p class="text-sm text-base-content/70 text-center mt-1 mb-4">
           Sign in to access your B-roll library and uploads.
         </p>
 
-        <form class="space-y-4" @submit.prevent="handleLogin">
+        <form class="space-y-4 mt-1" @submit.prevent="handleLogin">
           <label class="form-control w-full">
             <span class="label">
               <span class="label-text font-medium">Email</span>
@@ -38,27 +38,13 @@
             />
           </label>
 
-          <div class="flex items-center justify-between text-sm pt-1">
-            <label class="label cursor-pointer gap-2">
-              <input
-                v-model="rememberMe"
-                type="checkbox"
-                class="checkbox checkbox-sm"
-              />
-              <span class="label-text">Remember me</span>
-            </label>
-            <button type="button" class="link link-hover text-primary">
-              Forgot password?
-            </button>
-          </div>
-
           <p v-if="errorMessage" class="text-sm text-error">
             {{ errorMessage }}
           </p>
 
           <button
             type="submit"
-            class="btn btn-primary w-full"
+            class="btn btn-primary w-full mt-2"
             :disabled="isSubmitting"
           >
             <span
@@ -68,21 +54,6 @@
             {{ isSubmitting ? "Signing in..." : "Sign in" }}
           </button>
         </form>
-
-        <div class="divider my-3">OR</div>
-
-        <button
-          class="btn btn-outline w-full"
-          type="button"
-          @click="useDemoLogin"
-        >
-          Use demo login
-        </button>
-
-        <p class="text-sm text-center text-base-content/70 mt-3">
-          Need access?
-          <span class="text-primary font-medium">Contact your admin.</span>
-        </p>
       </div>
     </div>
   </div>
@@ -90,6 +61,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+
+const auth = useAuthStore();
 
 const email = ref("");
 const password = ref("");
@@ -122,6 +95,9 @@ async function handleLogin() {
       passwordLength: password.value.length,
       rememberMe: rememberMe.value,
     });
+
+    auth.login();
+    await navigateTo("/library");
   } catch {
     errorMessage.value = "Something went wrong. Please try again.";
   } finally {
