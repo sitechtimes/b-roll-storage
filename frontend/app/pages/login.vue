@@ -6,7 +6,7 @@
       <div class="card-body p-8 md:p-10">
         <h1 class="text-3xl font-bold text-center text-base-content">Login</h1>
         <p class="text-sm text-base-content/70 text-center mt-1 mb-4">
-          Sign in to access your B-roll library and uploads.
+          Sign in to upload your B-roll.
         </p>
 
         <form class="space-y-4 mt-1" @submit.prevent="handleLogin">
@@ -53,6 +53,15 @@
             ></span>
             {{ isSubmitting ? "Signing in..." : "Sign in" }}
           </button>
+
+          <button
+            type="button"
+            class="btn btn-outline w-full"
+            :disabled="isSubmitting"
+            @click="handleGuestSignIn"
+          >
+            Guest Sign In
+          </button>
         </form>
       </div>
     </div>
@@ -66,17 +75,8 @@ const auth = useAuthStore();
 
 const email = ref("");
 const password = ref("");
-const rememberMe = ref(false);
 const isSubmitting = ref(false);
 const errorMessage = ref("");
-
-const DEMO_EMAIL = "jarvisl5@nycstudents.net";
-
-function useDemoLogin() {
-  email.value = DEMO_EMAIL;
-  password.value = "";
-  errorMessage.value = "";
-}
 
 async function handleLogin() {
   errorMessage.value = "";
@@ -90,16 +90,27 @@ async function handleLogin() {
   try {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    console.log("Login submit payload (temporary):", {
-      email: email.value,
-      passwordLength: password.value.length,
-      rememberMe: rememberMe.value,
-    });
-
     auth.login();
     await navigateTo("/library");
   } catch {
     errorMessage.value = "Something went wrong. Please try again.";
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
+async function handleGuestSignIn() {
+  // fix the acual sign in button loading after clicking this too
+  errorMessage.value = "";
+
+  isSubmitting.value = true;
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    auth.login(); // add in a new auth method that lets you in without checking login | ask jarvis something cuz i forgot
+    await navigateTo("/library");
+  } catch {
+    errorMessage.value = "Unable to sign in as guest. Please try again.";
   } finally {
     isSubmitting.value = false;
   }
