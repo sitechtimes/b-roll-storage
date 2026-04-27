@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import { currentUser } from "./middleware/currentUser";
 const app = express();
 const port = process.env.PORT || 3000;
 
