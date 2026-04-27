@@ -96,6 +96,8 @@ const finalVideoFile = ref<{ fileName: string; tags: string[] }>({
   tags: [],
 });
 
+const auth = useAuthStore();
+
 const tags: string[] = ["Tag1", "Tag2", "Tag3"];
 
 const hasFile: { value: boolean } = ref(false); // dont delete ascctualy important
@@ -153,12 +155,20 @@ function addTagToFinalFile(x: string) {
 }
 
 function afterSubmit() {
-  finalVideoFile.value = { fileName: "", tags: [] };
-  hasFile.value = false;
-  videoFile.value = null;
-  if (videoElement.value) {
-    videoElement.value.src = "";
+  // not assigning correct value to auth.guestmode on guest mode login :(
+  console.log(auth.guestMode);
+  if (auth.guestMode != true) {
+    console.log("not a guest");
+    finalVideoFile.value = { fileName: "", tags: [] };
+    hasFile.value = false;
+    videoFile.value = null;
+    if (videoElement.value) {
+      videoElement.value.src = "";
+    }
+    thumbnailImage.value = "";
+  } else if (auth.guestMode == true) // if guest
+  {
+    console.log("guest dont upload nothing");
   }
-  thumbnailImage.value = "";
 }
 </script>

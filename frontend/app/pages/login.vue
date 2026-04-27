@@ -100,19 +100,13 @@ async function handleLogin() {
 }
 
 async function handleGuestSignIn() {
-  // fix the acual sign in button loading after clicking this too
   errorMessage.value = "";
-
-  isSubmitting.value = true;
   try {
     await new Promise((resolve) => setTimeout(resolve, 300));
-
-    auth.login(); // add in a new auth method that lets you in without checking login | ask jarvis something cuz i forgot
+    auth.login();
     await navigateTo("/library");
   } catch {
     errorMessage.value = "Unable to sign in as guest. Please try again.";
-  } finally {
-    isSubmitting.value = false;
   }
 }
 </script>
