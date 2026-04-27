@@ -1,5 +1,4 @@
 import express from "express";
-import { requireAuth } from "../middleware/validateAuth";
 import { requireRole } from "../middleware/validateRole";
 import { UserRole } from "../utils/userRole";
 const mediaController = require("../controllers/mediaController");

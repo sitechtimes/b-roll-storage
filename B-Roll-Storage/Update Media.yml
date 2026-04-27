@@ -5,15 +5,21 @@ info:
 
 http:
   method: PATCH
-  url: "{{base_url}}/medias/69b17eacc48caa9c79b69cae?operation=subtract"
+  url: "{{base_url}}/medias/69ef7908ceaf0bba609e1ab7?operation=add"
   params:
     - name: operation
-      value: subtract
+      value: add
       type: query
   body:
     type: json
-    data: ""
-  auth: inherit
+    data: |-
+      {
+        "title": "Haobin's Only",
+        "tags": ["haobin", "yuri", "yaoi"]
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc3MzAxMDYwLCJleHAiOjE3NzczMjI2NjB9.mhjWzoyL_td44TfXbxwsf4Wrin4C2IKjvBbrBd9jRgQ
 
 settings:
   encodeUrl: true

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{base_url}}/users/69e0f969550560885cf0fcbd"
+  url: "{{base_url}}/users/69ef763835a0799c02e08ee3"
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTBmOGQ0NTUwNTYwODg1Y2YwZmNiNyIsImVtYWlsIjoiamFydmlzbGkwNzEwQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2MzUxNzAyLCJleHAiOjE3NzYzNzMzMDJ9.P_Wk8aOhPl6PKe-FP19nW3s8vEKW10zT1xdO0zEeiNY

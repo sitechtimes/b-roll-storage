@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: "{{base_url}}/users/69e78e117f2a6486ad11bea8"
+  url: "{{base_url}}/users/69ef75eb35a0799c02e08ee0"
   body:
     type: json
     data: |-
@@ -16,7 +16,7 @@ http:
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTc4ZTExN2YyYTY0ODZhZDExYmVhOCIsImVtYWlsIjoiZGtAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NzY3ODI4OTMsImV4cCI6MTc3NjgwNDQ5M30.vPhFxRALU8JN3GUpwSME7NrvEmm5gg_rTgN_r1mJNRM
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc3MzAxMDYwLCJleHAiOjE3NzczMjI2NjB9.mhjWzoyL_td44TfXbxwsf4Wrin4C2IKjvBbrBd9jRgQ
 
 settings:
   encodeUrl: true

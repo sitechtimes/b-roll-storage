@@ -92,12 +92,12 @@ async function updateUser(req: Request, res: Response) {
       ),
     ];
 
-    updates = {
-      ...updates,
+    await User.findByIdAndUpdate(req.params.id, {
       $pull: { inventory: { $in: inventory } },
-      $push: {
-        inventory: { $each: inventory, $position: 0, $slice: 20 },
-      },
+    });
+
+    updates.$push = {
+      inventory: { $each: inventory, $position: 0, $slice: 20 },
     };
   }
 
