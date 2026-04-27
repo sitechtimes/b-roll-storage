@@ -1,14 +1,14 @@
 info:
   name: Fetch User
   type: http
-  seq: 10
+  seq: 11
 
 http:
   method: GET
   url: "{{base_url}}/users/"
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTBmOTY5NTUwNTYwODg1Y2YwZmNiZCIsImVtYWlsIjoidGVzdGluZzEyM0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzY5NTYxMjcsImV4cCI6MTc3Njk3NzcyN30.4cBbTws0_yKu2BknOzknhMjRcrwTMa4_bQYnJlBgCj0
+    token: ""
 
 settings:
   encodeUrl: true

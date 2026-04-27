@@ -1,7 +1,7 @@
 info:
   name: User Sign In
   type: http
-  seq: 8
+  seq: 9
 
 http:
   method: POST

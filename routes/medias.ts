@@ -8,23 +8,9 @@ const router = express.Router();
 router.get(`/`, mediaController.index);
 router.get(`/filter`, mediaController.getMedia);
 router.get("/:id", mediaController.getMediaById);
-router.post(
-  "/",
-  requireAuth,
-  requireRole(UserRole.Admin),
-  mediaController.createMedia,
-);
-router.delete(
-  "/:id",
-  requireAuth,
-  requireRole(UserRole.Admin),
-  mediaController.deleteMedia,
-);
-router.patch(
-  "/:id",
-  requireAuth,
-  requireRole(UserRole.Admin),
-  mediaController.updateMedia,
-);
+router.post("/", requireRole(UserRole.Admin), mediaController.createMedia);
+router.delete("/:id", requireRole(UserRole.Admin), mediaController.deleteMedia);
+router.delete(`/`, requireRole(UserRole.Admin), mediaController.deleteAllMedia);
+router.patch("/:id", requireRole(UserRole.Admin), mediaController.updateMedia);
 
 module.exports = router;

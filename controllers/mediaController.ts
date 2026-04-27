@@ -54,6 +54,13 @@ async function deleteMedia(req: Request, res: Response) {
   return res.status(200).json({ message: "Media successfully deleted" });
 }
 
+async function deleteAllMedia(req: Request, res: Response) {
+  const media = await Media.deleteMany({});
+  if (!media) return res.status(404).json({ error: "Media not found" });
+
+  return res.status(200).json({ message: "All media successfully deleted" });
+}
+
 async function updateMedia(req: Request, res: Response) {
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: "Empty body" });
@@ -94,5 +101,6 @@ module.exports = {
   getMedia,
   createMedia,
   deleteMedia,
+  deleteAllMedia,
   updateMedia,
 };

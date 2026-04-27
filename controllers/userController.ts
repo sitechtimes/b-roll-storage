@@ -42,6 +42,13 @@ async function deleteUser(req: Request, res: Response) {
   return res.status(200).json({ message: "User successfully deleted" });
 }
 
+async function deleteAllUsers(req: Request, res: Response) {
+  const user = await User.deleteMany({});
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  return res.status(200).json({ message: "All users successfully deleted" });
+}
+
 async function updateUser(req: Request, res: Response) {
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: "Empty body" });
@@ -155,6 +162,7 @@ module.exports = {
   getUserById,
   getUser,
   deleteUser,
+  deleteAllUsers,
   updateUser,
   changePassword,
 };
