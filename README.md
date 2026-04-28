@@ -20,6 +20,8 @@ if on windows (I think):
 or if on linux:
 ```./.venv/bin/pip install -r recognize-anything/requirements.txt```
 
+You also need the model weights itself, preferably ```https://huggingface.co/xinyu1205/recognize-anything-plus-model/blob/main/ram_plus_swin_large_14m.pth``` in particular.
+
 To actually start it, `npm run start` (don't forget the .env)
 
 
