@@ -6,7 +6,8 @@ info:
 http:
   method: DELETE
   url: "{{base_url}}/medias/69b17e9bc48caa9c79b69cab"
-  auth: inherit
+  auth:
+    type: bearer
 
 settings:
   encodeUrl: true

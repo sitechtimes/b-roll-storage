@@ -8,7 +8,7 @@ http:
   url: "{{base_url}}/medias/"
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTBmOTY5NTUwNTYwODg1Y2YwZmNiZCIsImVtYWlsIjoidGVzdGluZzEyM0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzcwNDE2NDcsImV4cCI6MTc3NzA2MzI0N30.YrYEpTcAJQEsy9Ds62QbqVHWbH-2qXWy_25XQXOLlgo
+    token: ""
 
 settings:
   encodeUrl: true
