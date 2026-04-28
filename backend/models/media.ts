@@ -46,4 +46,3 @@ const mediaSchema = new mongoose.Schema<IMedia>(schemaDefinition, {
 const Media = mongoose.model<IMedia>("Media", mediaSchema);
 
 export { Media };
-

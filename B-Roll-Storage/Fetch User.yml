@@ -1,13 +1,14 @@
 info:
-  name: Fetch Media by Id
+  name: Fetch User
   type: http
-  seq: 2
+  seq: 11
 
 http:
   method: GET
-  url: "{{base_url}}/medias/69b17eacc48caa9c79b69cae"
+  url: "{{base_url}}/users/"
   auth:
     type: bearer
+    token: ""
 
 settings:
   encodeUrl: true

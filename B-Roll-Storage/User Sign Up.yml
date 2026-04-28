@@ -1,0 +1,24 @@
+info:
+  name: User Sign Up
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{base_url}}/auth/signup"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Deniz K",
+        "email": "dk@gmail.com",
+        "password": "dk123again",
+        "role": "user"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

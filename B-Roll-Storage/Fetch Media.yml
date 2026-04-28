@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: "{{base_url}}/medias/"
-  auth: inherit
+  auth:
+    type: bearer
+    token: ""
 
 settings:
   encodeUrl: true

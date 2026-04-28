@@ -26,4 +26,3 @@ mongoose.connection.once("open", async () => {
     console.log(`App is listening at http://localhost:${port}`);
   });
 });
-

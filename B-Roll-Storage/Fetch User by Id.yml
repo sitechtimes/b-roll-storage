@@ -1,0 +1,17 @@
+info:
+  name: Fetch User by Id
+  type: http
+  seq: 12
+
+http:
+  method: GET
+  url: "{{base_url}}/users/69ef763835a0799c02e08ee3"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTBmOGQ0NTUwNTYwODg1Y2YwZmNiNyIsImVtYWlsIjoiamFydmlzbGkwNzEwQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2MzUxNzAyLCJleHAiOjE3NzYzNzMzMDJ9.P_Wk8aOhPl6PKe-FP19nW3s8vEKW10zT1xdO0zEeiNY
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

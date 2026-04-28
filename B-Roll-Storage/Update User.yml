@@ -1,21 +1,18 @@
 info:
-  name: Update Media
+  name: Update User
   type: http
-  seq: 7
+  seq: 16
 
 http:
   method: PATCH
-  url: "{{base_url}}/medias/69ef7908ceaf0bba609e1ab7?operation=add"
-  params:
-    - name: operation
-      value: add
-      type: query
+  url: "{{base_url}}/users/69ef75eb35a0799c02e08ee0"
   body:
     type: json
     data: |-
       {
-        "title": "Haobin's Only",
-        "tags": ["haobin", "yuri", "yaoi"]
+        "name": "Deniz Kong",
+        "inventory": ["Deniz just being Deniz"],
+        "role": "user"
       }
   auth:
     type: bearer
