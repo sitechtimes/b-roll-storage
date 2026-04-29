@@ -212,5 +212,4 @@ async function processVideo(videoPath: string): Promise<string[]> {
   }
 }
 
-module.exports = { processImage, processVideo };
-
+export { processImage, processVideo };

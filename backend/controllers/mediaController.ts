@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Media } from "../models/media";
+import { processImage, processVideo } from "../utils/ai_processing";
 
 async function index(req: Request, res: Response) {
   const media = await Media.find();
@@ -40,8 +41,18 @@ async function getMedia(req: Request, res: Response) {
 
 async function createMedia(req: Request, res: Response) {
   try {
-    const newMedia = await Media.insertMany(req.body);
-    return res.status(200).json(newMedia);
+    const createdMedia = [];
+
+    for (let i = 0; i < req.body.length; i++) {
+      const mediaPath = req.body[i].path;
+      // path is image of video
+      req.body[i].tags = await processImage(mediaPath);
+
+      const newMedia = await Media.create(req.body[i]);
+      createdMedia.push(newMedia);
+    }
+
+    return res.status(200).json(createdMedia);
   } catch (err) {
     return res.status(500).json(err);
   }
