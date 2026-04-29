@@ -8,7 +8,7 @@ const crypto = require("crypto");
  * Runs RAM+ inference using the venv's python executable
  * @param {string} imagePath - Absolute path to the image from the request
  */
-const processImage = (imagePath: string) => {
+const processImage = (imagePath: string): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     const isWindows = process.platform === "win32";
     const pythonExe = path.join(

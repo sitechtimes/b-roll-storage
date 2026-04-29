@@ -45,8 +45,23 @@ async function createMedia(req: Request, res: Response) {
 
     for (let i = 0; i < req.body.length; i++) {
       const mediaPath = req.body[i].path;
-      // path is image of video
-      req.body[i].tags = await processImage(mediaPath);
+      let aiTags: string[] = [];
+
+      if (req.body[i].type == "image") {
+        aiTags = await processImage(mediaPath);
+      } else if (req.body[i].type == "video") {
+        aiTags = await processVideo(mediaPath);
+      }
+
+      const combinedTags = [
+        ...new Set(
+          [...req.body[i].tags, ...aiTags]
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0),
+        ),
+      ];
+
+      req.body[i].tags = combinedTags;
 
       const newMedia = await Media.create(req.body[i]);
       createdMedia.push(newMedia);

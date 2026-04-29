@@ -83,21 +83,21 @@ async function updateUser(req: Request, res: Response) {
     updates.name = req.body.name;
   }
 
-  if (req.body.inventory) {
-    const inventory = [
+  if (req.body.recents) {
+    const recents = [
       ...new Set(
-        (req.body.inventory as string[])
+        (req.body.recents as string[])
           .map((item) => item.trim())
           .filter((item) => item.length > 0),
       ),
     ];
 
     await User.findByIdAndUpdate(req.params.id, {
-      $pull: { inventory: { $in: inventory } },
+      $pull: { recents: { $in: recents } },
     });
 
     updates.$push = {
-      inventory: { $each: inventory, $position: 0, $slice: 20 },
+      recents: { $each: recents, $position: 0, $slice: 20 },
     };
   }
 

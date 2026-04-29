@@ -5,3 +5,4 @@ dev.env
 broll/
 
 recognize-anything/
+.venv
