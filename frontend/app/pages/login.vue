@@ -90,7 +90,7 @@ async function handleLogin() {
   try {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    auth.login();
+    auth.signedIn();
     await navigateTo("/library");
   } catch {
     errorMessage.value = "Something went wrong. Please try again.";
@@ -103,7 +103,7 @@ async function handleGuestSignIn() {
   errorMessage.value = "";
   try {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    auth.login();
+    auth.signedIn();
     await navigateTo("/library");
   } catch {
     errorMessage.value = "Unable to sign in as guest. Please try again.";

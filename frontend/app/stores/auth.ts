@@ -1,7 +1,4 @@
 import { defineStore } from "pinia";
-// go over with jarvis later to see if its fine or if backend handles it alr?
-// yea this needs to be implemented with bakend call to user to check role
-// guest mode needs authcookie thing, write tmrw and see if fix
 
 export const useAuthStore = defineStore("auth", () => {
   const authCookie = useCookie<boolean>("is_logged_in", {
@@ -10,18 +7,11 @@ export const useAuthStore = defineStore("auth", () => {
   });
 
   const isLoggedIn = ref<boolean>(Boolean(authCookie.value));
-  const guestMode = ref<boolean>(false);
 
-  function login() {
+  function signedIn() {
+    // simple check for both guest and sign in to just let you in
     isLoggedIn.value = true;
     authCookie.value = true;
-    return (guestMode.value = false);
-  }
-
-  function guestLogin() {
-    isLoggedIn.value = true;
-    authCookie.value = true;
-    return (guestMode.value = true);
   }
 
   function logout() {
@@ -30,10 +20,8 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   return {
-    guestMode,
+    signedIn,
     isLoggedIn,
-    login,
-    guestLogin,
     logout,
   };
 });

@@ -155,20 +155,12 @@ function addTagToFinalFile(x: string) {
 }
 
 function afterSubmit() {
-  // not assigning correct value to auth.guestmode on guest mode login :(
-  console.log(auth.guestMode);
-  if (auth.guestMode != true) {
-    console.log("not a guest");
-    finalVideoFile.value = { fileName: "", tags: [] };
-    hasFile.value = false;
-    videoFile.value = null;
-    if (videoElement.value) {
-      videoElement.value.src = "";
-    }
-    thumbnailImage.value = "";
-  } else if (auth.guestMode == true) // if guest
-  {
-    console.log("guest dont upload nothing");
+  finalVideoFile.value = { fileName: "", tags: [] };
+  hasFile.value = false;
+  videoFile.value = null;
+  if (videoElement.value) {
+    videoElement.value.src = "";
   }
+  thumbnailImage.value = "";
 }
 </script>
