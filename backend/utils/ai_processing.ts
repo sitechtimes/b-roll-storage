@@ -28,7 +28,13 @@ const processImage = (imagePath: string): Promise<string[]> => {
 
     const args = [scriptPath, "--image", imagePath, "--pretrained", modelPath];
 
-    const pythonProcess = spawn(pythonExe, args);
+    const pythonProcess = spawn(pythonExe, args, {
+      cwd: path.resolve(__dirname, "../recognize-anything"),
+      env: {
+        ...process.env,
+        PYTHONIOENCODING: "utf-8",
+      },
+    });
 
     let output = "";
     let errorData = "";

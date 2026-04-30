@@ -69,7 +69,9 @@ async function createMedia(req: Request, res: Response) {
 
     return res.status(200).json(createdMedia);
   } catch (err) {
-    return res.status(500).json(err);
+    return res
+      .status(500)
+      .json({ message: err instanceof Error ? err.message : err });
   }
 }
 

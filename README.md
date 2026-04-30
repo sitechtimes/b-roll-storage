@@ -2,7 +2,7 @@
 
 ## Description
 
-System for storing b-roll images and video in an easily accessible manner 
+System for storing b-roll images and video in an easily accessible manner
 Uses Express for backend, MongoDB for storage, RAM+ for tagging media
 
 ## How to start the backend (funky AI stuff)
@@ -16,19 +16,19 @@ python -m venv .venv
 ```
 
 if on windows (I think):
-```.\.venv\Scripts\pip.exe install -r recognize-anything/requirements.txt``` 
+`.\.venv\Scripts\pip.exe install -r recognize-anything/requirements.txt`
 or if on linux:
-```./.venv/bin/pip install -r recognize-anything/requirements.txt```
+`./.venv/bin/pip install -r recognize-anything/requirements.txt`
 
-You also need the model weights itself, preferably ```https://huggingface.co/xinyu1205/recognize-anything-plus-model/blob/main/ram_plus_swin_large_14m.pth``` in particular.
+You also need the model weights itself, preferably `https://huggingface.co/xinyu1205/recognize-anything-plus-model/blob/main/ram_plus_swin_large_14m.pth` in particular.
 
 To actually start it, `npm run start` (don't forget the .env)
-
 
 Now there are two weird errors that will occur from here when you attempt to get the AI tagging model to run:
 
 The first of which is `ImportError: cannot import name 'apply_chunking_to_forward' from 'transformers.modeling_utils'`
 to which you need to edit `/recognise-everything/ram/models/bert.py` and change
+
 ```
 from transformers.modeling_utils import (
     PreTrainedModel,
@@ -37,7 +37,9 @@ from transformers.modeling_utils import (
     prune_linear_layer,
 )
 ```
-to 
+
+to
+
 ```
 from transformers.modeling_utils import (
     PreTrainedModel,
@@ -50,5 +52,5 @@ from transformers.pytorch_utils import (
 )
 ```
 
-The second error is `ImportError: cannot import name 'find_pruneable_heads_and_indices' from 'transformers.pytorch_utils'` to which you need to run 
-```.venv/bin/pip install "transformers==4.57.1"``` (this happens because it installs the incorrect version from the requirements.txt, so you can change that instead).
+The second error is `ImportError: cannot import name 'find_pruneable_heads_and_indices' from 'transformers.pytorch_utils'` to which you need to run
+`.venv/bin/pip install "transformers==4.57.1"` (this happens because it installs the incorrect version from the requirements.txt, so you can change that instead).
