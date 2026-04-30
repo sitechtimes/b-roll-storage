@@ -3,6 +3,19 @@
     <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">
       Media Library
     </h1>
+    <div class="w-1/2 mx-auto mb-8">
+      <label class="input input-bordered flex items-center gap-2 w-full">
+        <input
+          v-model.trim="searchQuery"
+          type="search"
+          placeholder="Search by title, type, or tag"
+          class="grow w-full"
+        />
+      </label>
+      <p class="text-sm text-gray-500 mt-2 text-center">
+        Showing {{ filteredMedia.length }} of {{ media.length }} items
+      </p>
+    </div>
     <div v-if="modalView">
       <dialog class="modal" open>
         <div class="modal-box">
@@ -25,7 +38,7 @@
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     >
       <div
-        v-for="item in media"
+        v-for="item in filteredMedia"
         :key="item._id.$oid"
         class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
         @click="openLibraryItem(item)"
@@ -46,10 +59,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 let history = ref<string[]>([]);
+const searchQuery = ref("");
 // leave the type any for now gotta test if it works
 
 function viewHistory(title: string) {
@@ -78,6 +92,19 @@ interface Media {
 }
 
 const media = ref<Media[]>([]);
+
+const filteredMedia = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) {
+    return media.value;
+  }
+
+  return media.value.filter((item) => {
+    const tags = item.tags?.join(" ") ?? "";
+    const searchable = `${item.title} ${item.type} ${tags}`.toLowerCase();
+    return searchable.includes(query);
+  });
+});
 
 onMounted(async () => {
   try {
