@@ -1,18 +1,1 @@
-for the video uploads so i dont forget make a sort of tag system that when uploaded file it gets saved as a object or something of the sorts
-and then when you pick tags it adds to object 
-
-uploading file is able to grab it and display a preview for it now. no backend compabilty as of now
-
-
-3/17/26
-bruno, copy backend folder into it and use thoose routes- setup mongodb connection to load up stuff for front end testing at the least
-
-uploading videos so far doesnt give it thumnbnails | should library give you a thumbnail or allow you to play?
-uploading the videos doesnt do anyhting with the actual file | sort of a backend issue but also front end
-consoles errors from the fake data or smething in browser fix later
-
-4/20
-login page needed | roles included in the mongocall for user DB
-recently viewed for invotry part
-guest mode | view mode basiclly
-admin login | only admins can upload the videos
+go over with jarvis see if i needa add anything
