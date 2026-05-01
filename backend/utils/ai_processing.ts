@@ -8,7 +8,7 @@ const crypto = require("crypto");
  * Runs RAM+ inference using the venv's python executable
  * @param {string} imagePath - Absolute path to the image from the request
  */
-const processImage = (imagePath: string) => {
+const processImage = (imagePath: string): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     const isWindows = process.platform === "win32";
     const pythonExe = path.join(
@@ -28,7 +28,13 @@ const processImage = (imagePath: string) => {
 
     const args = [scriptPath, "--image", imagePath, "--pretrained", modelPath];
 
-    const pythonProcess = spawn(pythonExe, args);
+    const pythonProcess = spawn(pythonExe, args, {
+      cwd: path.resolve(__dirname, "../recognize-anything"),
+      env: {
+        ...process.env,
+        PYTHONIOENCODING: "utf-8",
+      },
+    });
 
     let output = "";
     let errorData = "";
@@ -212,5 +218,4 @@ async function processVideo(videoPath: string): Promise<string[]> {
   }
 }
 
-module.exports = { processImage, processVideo };
-
+export { processImage, processVideo };

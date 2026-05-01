@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Media } from "../models/media";
+import { processImage, processVideo } from "../utils/ai_processing";
 
 async function index(req: Request, res: Response) {
   const media = await Media.find();
@@ -40,10 +41,37 @@ async function getMedia(req: Request, res: Response) {
 
 async function createMedia(req: Request, res: Response) {
   try {
-    const newMedia = await Media.insertMany(req.body);
-    return res.status(200).json(newMedia);
+    const createdMedia = [];
+
+    for (let i = 0; i < req.body.length; i++) {
+      const mediaPath = req.body[i].path;
+      let aiTags: string[] = [];
+
+      if (req.body[i].type == "image") {
+        aiTags = await processImage(mediaPath);
+      } else if (req.body[i].type == "video") {
+        aiTags = await processVideo(mediaPath);
+      }
+
+      const combinedTags = [
+        ...new Set(
+          [...req.body[i].tags, ...aiTags]
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0),
+        ),
+      ];
+
+      req.body[i].tags = combinedTags;
+
+      const newMedia = await Media.create(req.body[i]);
+      createdMedia.push(newMedia);
+    }
+
+    return res.status(200).json(createdMedia);
   } catch (err) {
-    return res.status(500).json(err);
+    return res
+      .status(500)
+      .json({ message: err instanceof Error ? err.message : err });
   }
 }
 
