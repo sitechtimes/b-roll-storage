@@ -76,6 +76,7 @@ const processImage = (imagePath: string) => {
  * @param {string} videoPath - Absolute path to the video from the request
  */
 async function processVideo(videoPath: string): Promise<string[]> {
+  // has not been tested yet, test it later
   // helper: get duration via ffprobe or ffmpeg
   function getDuration(vpath: string): number | null {
     try {
