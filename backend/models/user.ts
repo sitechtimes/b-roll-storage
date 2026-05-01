@@ -7,7 +7,7 @@ export interface IUser extends mongoose.Document {
   email: string;
   password: string;
   role: UserRole;
-  inventory: string[];
+  recents: string[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -34,7 +34,7 @@ const schemaDefinition = {
     default: UserRole.User,
     required: true,
   },
-  inventory: {
+  recents: {
     type: [String],
     default: [] as string[],
     required: true,
