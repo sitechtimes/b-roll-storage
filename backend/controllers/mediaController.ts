@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Media } from "../models/media";
 import { processImage, processVideo } from "../utils/ai_processing";
+import path from "path";
 
 async function index(req: Request, res: Response) {
   const media = await Media.find();
@@ -41,37 +42,47 @@ async function getMedia(req: Request, res: Response) {
 
 async function createMedia(req: Request, res: Response) {
   try {
-    const createdMedia = [];
+    const files = req.files as Express.Multer.File[];
 
-    for (let i = 0; i < req.body.length; i++) {
-      const mediaPath = req.body[i].path;
-      let aiTags: string[] = [];
-
-      if (req.body[i].type == "image") {
-        aiTags = await processImage(mediaPath);
-      } else if (req.body[i].type == "video") {
-        aiTags = await processVideo(mediaPath);
-      }
-
-      const combinedTags = [
-        ...new Set(
-          [...req.body[i].tags, ...aiTags]
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0),
-        ),
-      ];
-
-      req.body[i].tags = combinedTags;
-
-      const newMedia = await Media.create(req.body[i]);
-      createdMedia.push(newMedia);
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: "No files uploaded" });
     }
 
-    return res.status(200).json(createdMedia);
+    const mediaDocs = await Promise.all(
+      files.map(async (file) => {
+        let type = "unknown";
+        let aiTags: string[] = [];
+        const fullPath = path.resolve(file.path).replace(/\\/g, "/");
+
+        if (file.mimetype.startsWith("image/")) {
+          type = "image";
+          aiTags = await processImage(fullPath);
+        } else if (file.mimetype.startsWith("video/")) {
+          type = "video";
+          aiTags = await processVideo(fullPath);
+        }
+
+        const userTags = req.body.tags
+          ? req.body.tags.split(",").map((t: string) => t.trim())
+          : [];
+
+        const tags = [...new Set([...userTags, ...aiTags])];
+
+        return {
+          title: file.originalname,
+          type,
+          path: file.path,
+          tags,
+        };
+      }),
+    );
+
+    const newMedia = await Media.insertMany(mediaDocs);
+
+    return res.status(200).json(newMedia);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: err instanceof Error ? err.message : err });
+    console.error(err);
+    return res.status(500).json({ error: "Failed to process media" });
   }
 }
 

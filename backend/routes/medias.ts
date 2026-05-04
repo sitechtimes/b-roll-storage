@@ -11,7 +11,7 @@ router.get("/:id", mediaController.getMediaById);
 router.post(
   "/",
   requireRole(UserRole.Admin),
-  upload.array("photos", 10),
+  upload.array("media", 10),
   mediaController.createMedia,
 );
 router.delete("/:id", requireRole(UserRole.Admin), mediaController.deleteMedia);
