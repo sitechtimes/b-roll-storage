@@ -9,6 +9,8 @@ import { UserPayload } from "../middleware/currentUser"; // <-- your shared type
  */
 interface AuthenticatedRequest extends Request {
   currentUser?: UserPayload;
+  fileType: "image" | "video";
+  files?: Express.Multer.File[];
 }
 
 /**
@@ -21,12 +23,19 @@ fs.mkdirSync(uploadsDir, { recursive: true });
  * Multer storage configuration
  */
 const storage: StorageEngine = multer.diskStorage({
-  destination: (
-    req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void,
-  ): void => {
-    cb(null, uploadsDir);
+  destination: (req, file, cb) => {
+    let folder = "other";
+
+    if (file.mimetype.startsWith("image/")) {
+      folder = "images";
+    } else if (file.mimetype.startsWith("video/")) {
+      folder = "videos";
+    }
+
+    const uploadPath = path.join(uploadsDir, folder);
+    fs.mkdirSync(uploadPath, { recursive: true });
+
+    cb(null, uploadPath);
   },
 
   filename: (
@@ -49,17 +58,26 @@ const storage: StorageEngine = multer.diskStorage({
  * File filter (images only)
  */
 const fileFilter = (
-  req: Request,
+  req: AuthenticatedRequest,
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ): void => {
   if (file.mimetype.startsWith("image/")) {
+    req.fileType = "image";
+    cb(null, true);
+  } else if (file.mimetype.startsWith("video/")) {
+    req.fileType = "video";
     cb(null, true);
   } else {
-    cb(new Error("Only image files are allowed"));
+    cb(new Error("Only images and videos are allowed"));
   }
 };
 
+const getFileType = (mimetype: string): "image" | "video" | null => {
+  if (mimetype.startsWith("image/")) return "image";
+  if (mimetype.startsWith("video/")) return "video";
+  return null;
+};
 /**
  * Multer instance
  */

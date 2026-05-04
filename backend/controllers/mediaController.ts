@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Media } from "../models/media";
 import { processImage, processVideo } from "../utils/ai_processing";
 import path from "path";
+import fs from "fs";
 
 async function index(req: Request, res: Response) {
   const media = await Media.find();
@@ -48,38 +49,62 @@ async function createMedia(req: Request, res: Response) {
       return res.status(400).json({ error: "No files uploaded" });
     }
 
-    const mediaDocs = await Promise.all(
+    const userTags: string[] = req.body.tags
+      ? req.body.tags.split(",").map((t: string) => t.trim())
+      : [];
+
+    const successes: any[] = [];
+    const failures: any[] = [];
+
+    await Promise.all(
       files.map(async (file) => {
-        let type = "unknown";
-        let aiTags: string[] = [];
         const fullPath = path.resolve(file.path).replace(/\\/g, "/");
 
-        if (file.mimetype.startsWith("image/")) {
-          type = "image";
-          aiTags = await processImage(fullPath);
-        } else if (file.mimetype.startsWith("video/")) {
-          type = "video";
-          aiTags = await processVideo(fullPath);
+        try {
+          let aiTags: string[] = [];
+          let type: "image" | "video";
+
+          if (file.mimetype.startsWith("image/")) {
+            type = "image";
+            aiTags = await processImage(fullPath);
+          } else if (file.mimetype.startsWith("video/")) {
+            type = "video";
+            aiTags = await processVideo(fullPath);
+          } else {
+            throw new Error(`Unsupported file type: ${file.mimetype}`);
+          }
+
+          const tags = [...new Set([...userTags, ...aiTags])];
+
+          successes.push({
+            title: file.originalname,
+            type,
+            path: fullPath,
+            tags,
+          });
+        } catch (err: any) {
+          try {
+            await fs.promises.unlink(file.path);
+          } catch (cleanupErr) {
+            console.error("Failed to delete file:", cleanupErr);
+          }
+
+          failures.push({
+            file: file.originalname,
+            error: err.message || "Processing failed",
+          });
         }
-
-        const userTags = req.body.tags
-          ? req.body.tags.split(",").map((t: string) => t.trim())
-          : [];
-
-        const tags = [...new Set([...userTags, ...aiTags])];
-
-        return {
-          title: file.originalname,
-          type,
-          path: file.path,
-          tags,
-        };
       }),
     );
 
-    const newMedia = await Media.insertMany(mediaDocs);
+    const savedMedia = successes.length
+      ? await Media.insertMany(successes)
+      : [];
 
-    return res.status(200).json(newMedia);
+    return res.status(207).json({
+      success: savedMedia,
+      failed: failures,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Failed to process media" });
