@@ -1,9 +1,9 @@
 import express from "express";
 import { requireRole } from "../middleware/validateRole";
 import { UserRole } from "../utils/userRole";
+import upload from "../middleware/upload";
 const mediaController = require("../controllers/mediaController");
 const router = express.Router();
-const upload = require("../middleware/upload");
 
 router.get(`/`, mediaController.index);
 router.get(`/filter`, mediaController.getMedia);
@@ -11,7 +11,7 @@ router.get("/:id", mediaController.getMediaById);
 router.post(
   "/",
   requireRole(UserRole.Admin),
-  upload.array("media", 10),
+  upload.array("files", 10),
   mediaController.createMedia,
 );
 router.delete("/:id", requireRole(UserRole.Admin), mediaController.deleteMedia);

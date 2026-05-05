@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Media } from "../models/media";
 import { processImage, processVideo } from "../utils/ai_processing";
+import { FileMeta } from "../utils/filemetaType";
 import path from "path";
 import fs from "fs";
 
@@ -49,15 +50,25 @@ async function createMedia(req: Request, res: Response) {
       return res.status(400).json({ error: "No files uploaded" });
     }
 
-    const userTags: string[] = req.body.tags
-      ? req.body.tags.split(",").map((t: string) => t.trim())
-      : [];
+    let metadata: FileMeta[] = [];
 
     const successes: any[] = [];
     const failures: any[] = [];
 
+    try {
+      metadata = req.body.metadata ? JSON.parse(req.body.metadata) : [];
+    } catch {
+      return res.status(400).json({ error: "Invalid metadata JSON" });
+    }
+
+    if (metadata.length && metadata.length !== files.length) {
+      return res.status(400).json({
+        error: "Metadata length must match number of files",
+      });
+    }
+
     await Promise.all(
-      files.map(async (file) => {
+      files.map(async (file, index) => {
         const fullPath = path.resolve(file.path).replace(/\\/g, "/");
 
         try {
@@ -74,20 +85,22 @@ async function createMedia(req: Request, res: Response) {
             throw new Error(`Unsupported file type: ${file.mimetype}`);
           }
 
+          const fileMeta = metadata[index] || {};
+
+          const userTags: string[] = (fileMeta.tags || [])
+            .map((t: string) => t.trim())
+            .filter((t: string) => t.length > 0);
+
           const tags = [...new Set([...userTags, ...aiTags])];
 
           successes.push({
-            title: file.originalname,
+            title: fileMeta.title || file.originalname,
             type,
             path: fullPath,
             tags,
           });
         } catch (err: any) {
-          try {
-            await fs.promises.unlink(file.path);
-          } catch (cleanupErr) {
-            console.error("Failed to delete file:", cleanupErr);
-          }
+          await fs.promises.unlink(file.path).catch(() => {});
 
           failures.push({
             file: file.originalname,
@@ -97,9 +110,17 @@ async function createMedia(req: Request, res: Response) {
       }),
     );
 
-    const savedMedia = successes.length
-      ? await Media.insertMany(successes)
-      : [];
+    let savedMedia = [];
+
+    try {
+      savedMedia = successes.length ? await Media.insertMany(successes) : [];
+    } catch (dbErr) {
+      await Promise.all(
+        successes.map((item) => fs.promises.unlink(item.path).catch(() => {})),
+      );
+
+      return res.status(500).json({ error: "Database insert failed" });
+    }
 
     return res.status(207).json({
       success: savedMedia,
@@ -115,12 +136,19 @@ async function deleteMedia(req: Request, res: Response) {
   const media = await Media.findByIdAndDelete(req.params.id);
   if (!media) return res.status(404).json({ error: "Media not found" });
 
+  await fs.promises.unlink(media.path).catch(() => {});
+
   return res.status(200).json({ message: "Media successfully deleted" });
 }
 
 async function deleteAllMedia(req: Request, res: Response) {
-  const media = await Media.deleteMany({});
-  if (!media) return res.status(404).json({ error: "Media not found" });
+  const media = await Media.find();
+
+  await Promise.all(
+    media.map((m) => fs.promises.unlink(m.path).catch(() => {})),
+  );
+
+  await Media.deleteMany({});
 
   return res.status(200).json({ message: "All media successfully deleted" });
 }
