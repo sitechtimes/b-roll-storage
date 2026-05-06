@@ -1,8 +1,8 @@
 <template>
   <div class="flex bg-gray-100 min-h-screen p-4">
     <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-lg overflow-y-auto rounded-lg">
-      <div class="p-6">
+    <div class="w-64 h-[100vh] bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
+      <div class="p-6 overflow-y-auto flex-1">
         <h2 class="text-xl font-bold text-gray-800 mb-4">View History</h2>
         <div v-if="history.length === 0" class="text-sm text-gray-500">
           No history yet
