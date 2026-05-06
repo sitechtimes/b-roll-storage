@@ -2,15 +2,11 @@ import multer, { StorageEngine, FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
 import { Request } from "express";
-import { UserPayload } from "../middleware/currentUser"; // <-- your shared type
+import { UserPayload } from "../middleware/currentUser";
+import { getFileType } from "../utils/getFileType";
 
-/**
- * Extend Express Request to include currentUser
- */
 interface AuthenticatedRequest extends Request {
   currentUser?: UserPayload;
-  fileType: "image" | "video";
-  files?: Express.Multer.File[];
 }
 
 /**
@@ -24,13 +20,11 @@ fs.mkdirSync(uploadsDir, { recursive: true });
  */
 const storage: StorageEngine = multer.diskStorage({
   destination: (req, file, cb) => {
-    let folder = "other";
+    const type = getFileType(file.mimetype, file.originalname);
 
-    if (file.mimetype.startsWith("image/")) {
-      folder = "images";
-    } else if (file.mimetype.startsWith("video/")) {
-      folder = "videos";
-    }
+    let folder = "other";
+    if (type === "image") folder = "images";
+    if (type === "video") folder = "videos";
 
     const uploadPath = path.join(uploadsDir, folder);
     fs.mkdirSync(uploadPath, { recursive: true });
@@ -41,43 +35,36 @@ const storage: StorageEngine = multer.diskStorage({
   filename: (
     req: AuthenticatedRequest,
     file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void,
+    cb,
   ): void => {
     if (!req.currentUser) {
       return cb(new Error("User not authenticated"), "");
     }
 
-    const ext: string = path.extname(file.originalname);
-    const filename: string = `user-${req.currentUser.id}-${Date.now()}${ext}`;
+    const ext = path.extname(file.originalname);
+    const filename = `user-${req.currentUser.id}-${Date.now()}${ext}`;
 
     cb(null, filename);
   },
 });
 
 /**
- * File filter (images only)
+ * File filter
  */
 const fileFilter = (
-  req: AuthenticatedRequest,
+  req: Request,
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ): void => {
-  if (file.mimetype.startsWith("image/")) {
-    req.fileType = "image";
-    cb(null, true);
-  } else if (file.mimetype.startsWith("video/")) {
-    req.fileType = "video";
+  const type = getFileType(file.mimetype, file.originalname);
+
+  if (type) {
     cb(null, true);
   } else {
-    cb(new Error("Only images and videos are allowed"));
+    cb(new Error("Only image and video files are allowed"));
   }
 };
 
-const getFileType = (mimetype: string): "image" | "video" | null => {
-  if (mimetype.startsWith("image/")) return "image";
-  if (mimetype.startsWith("video/")) return "video";
-  return null;
-};
 /**
  * Multer instance
  */
@@ -85,7 +72,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
+    fileSize: 5 * 1024 * 1024,
   },
 });
 

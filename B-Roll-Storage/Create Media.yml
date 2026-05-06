@@ -10,12 +10,14 @@ http:
     type: multipart-form
     data:
       - name: files
-        type: text
-        value: ""
+        type: file
+        value:
+          - C:\Users\flame\Downloads\CatKaden.jpg
         contentType: File
       - name: files
-        type: text
-        value: ""
+        type: file
+        value:
+          - C:\Users\flame\Downloads\SmallBoy.png
         contentType: File
       - name: metadata
         type: text
@@ -33,7 +35,7 @@ http:
         contentType: Text
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc3NTE4MjUyLCJleHAiOjE3Nzc1Mzk4NTJ9.phOb5LjFlGc0Wh-e-wzJ64Id3EXHTnogIVnO9wvrUIM
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc4MDc4NTE5LCJleHAiOjE3NzgxMDAxMTl9.wFrJfNCCs-6NTbtb8udBJDRRGXyYotW7wLzmWlO1e2o
 
 settings:
   encodeUrl: true

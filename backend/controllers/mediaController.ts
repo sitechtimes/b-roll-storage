@@ -3,7 +3,8 @@ import { Media } from "../models/media";
 import { processImage, processVideo } from "../utils/ai_processing";
 import { FileMeta } from "../utils/filemetaType";
 import path from "path";
-import fs from "fs";
+import fs, { copyFileSync } from "fs";
+import { getFileType } from "../utils/getFileType";
 
 async function index(req: Request, res: Response) {
   const media = await Media.find();
@@ -43,6 +44,9 @@ async function getMedia(req: Request, res: Response) {
 }
 
 async function createMedia(req: Request, res: Response) {
+  console.log("FILES:", req.files);
+  console.log("BODY:", req.body);
+
   try {
     const files = req.files as Express.Multer.File[];
 
@@ -72,17 +76,18 @@ async function createMedia(req: Request, res: Response) {
         const fullPath = path.resolve(file.path).replace(/\\/g, "/");
 
         try {
-          let aiTags: string[] = [];
-          let type: "image" | "video";
+          const type = getFileType(file.mimetype, file.originalname);
 
-          if (file.mimetype.startsWith("image/")) {
-            type = "image";
+          if (!type) {
+            throw new Error("Unsupported file type");
+          }
+
+          let aiTags: string[] = [];
+
+          if (type === "image") {
             aiTags = await processImage(fullPath);
-          } else if (file.mimetype.startsWith("video/")) {
-            type = "video";
-            aiTags = await processVideo(fullPath);
           } else {
-            throw new Error(`Unsupported file type: ${file.mimetype}`);
+            aiTags = await processVideo(fullPath);
           }
 
           const fileMeta = metadata[index] || {};
