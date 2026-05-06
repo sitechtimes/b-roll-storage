@@ -1,15 +1,15 @@
 <template>
-  <div class="flex bg-gray-100 min-h-screen p-4">
+  <div class="flex bg-gray-100 min-h-screen">
     <!-- Sidebar -->
-    <div class="w-64 h-[100vh] bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
+    <div class="w-64 h-screen bg-white shadow-lg overflow-hidden flex flex-col">
       <div class="p-6 overflow-y-auto flex-1">
         <h2 class="text-xl font-bold text-gray-800 mb-4">View History</h2>
-        <div v-if="history.length === 0" class="text-sm text-gray-500">
+        <div v-if="historyStore.history.length === 0" class="text-sm text-gray-500">
           No history yet
         </div>
         <ul class="space-y-2">
           <li
-            v-for="(item, index) in history"
+            v-for="(item, index) in historyStore.history"
             :key="index"
             class="p-3 rounded-lg bg-gray-50 hover:bg-blue-100 cursor-pointer transition-colors"
             @click="openHistoryItem(item)"
@@ -86,19 +86,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
+import { useViewHistoryStore } from "~/stores/viewHistory";
+
+const historyStore = useViewHistoryStore();
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
-let history = ref<any[]>([]);
 const searchQuery = ref("");
-
-function viewHistory(item: any) {
-  history.value.unshift(item);
-}
 
 function openLibraryItem(x: any) {
   modalView.value = true;
   selectedItem.value = x;
-  viewHistory(x);
+  historyStore.addToHistory(x);
 }
 
 function openHistoryItem(item: any) {

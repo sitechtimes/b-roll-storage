@@ -28,9 +28,14 @@
 </template>
 
 <script setup lang="ts">
+import { useViewHistoryStore } from "~/stores/viewHistory";
+
+const historyStore = useViewHistoryStore();
+
 const auth = useAuthStore();
 function logout() {
   auth.logout();
+  historyStore.clearHistory();
   navigateTo("/login");
 }
 </script>
