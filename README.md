@@ -5,6 +5,7 @@ A modern Nuxt.js application for uploading, organizing, and managing B-roll vide
 ## Features
 
 ### Core Features
+
 - **User Authentication**: Login system with guest mode support
 - **Upload**: Upload video files with preview and tagging
 - **Library**: Browse and manage uploaded media with gallery view
@@ -13,6 +14,7 @@ A modern Nuxt.js application for uploading, organizing, and managing B-roll vide
 - **AI Integration**: AI-powered features for media management
 
 ### Technical Features
+
 - Persistent state management using Pinia with state persistence
 - Protected routes with authentication middleware
 - Real-time video preview
@@ -63,12 +65,14 @@ frontend/
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd b-roll-storage
    ```
 
 2. Navigate to the frontend directory:
+
    ```bash
    cd frontend
    ```
@@ -110,21 +114,23 @@ npm run generate
 
 ## Application Routes
 
-| Route | Purpose | Protected |
-|-------|---------|-----------|
-| `/login` | User authentication and guest access | No |
-| `/upload` | Upload and manage video files | Yes |
-| `/library` | Browse media gallery and search | Yes |
+| Route      | Purpose                              | Protected |
+| ---------- | ------------------------------------ | --------- |
+| `/login`   | User authentication and guest access | No        |
+| `/upload`  | Upload and manage video files        | Yes       |
+| `/library` | Browse media gallery and search      | Yes       |
 
 ## State Management
 
 ### Auth Store (`stores/auth.ts`)
+
 - Manages user authentication state
 - Handles login/logout logic
 - Supports guest mode
 - State persists across page reloads
 
 ### View History Store (`stores/viewHistory.ts`)
+
 - Tracks recently viewed media items
 - Persistent storage for user history
 - Used for recommendations and user analytics
@@ -132,6 +138,7 @@ npm run generate
 ## Middleware
 
 ### Global Auth Middleware (`middleware/auth.global.ts`)
+
 - Protects routes requiring authentication
 - Redirects unauthenticated users to login
 - Checks for valid user session
@@ -156,6 +163,7 @@ npm run generate
 ## Configuration
 
 Key configuration is handled in `nuxt.config.ts`. The application uses:
+
 - Tailwind CSS via Vite plugin
 - Pinia for state management with persistence plugin
 - Nuxt ESLint for code quality
@@ -163,6 +171,7 @@ Key configuration is handled in `nuxt.config.ts`. The application uses:
 ## Browser Support
 
 Works on all modern browsers supporting:
+
 - ES2020+
 - CSS Grid and Flexbox
 - Local Storage (for Pinia persistence)
@@ -170,6 +179,7 @@ Works on all modern browsers supporting:
 ## Contributing
 
 When working on features:
+
 1. Create a feature branch from `main`
 2. Implement changes on the frontend
 3. Test in development with `npm run dev`
