@@ -1,23 +1,30 @@
 <template>
   <div class="flex bg-gray-100 min-h-screen">
     <!-- Sidebar -->
-    <div class="w-64 h-screen bg-white shadow-lg overflow-hidden flex flex-col">
+    <div
+      class="w-64 h-[calc(100vh-1.5rem)] ml-3 my-3 rounded-3xl bg-linear-to-b from-gray-50 to-gray-100 shadow-lg overflow-hidden flex flex-col"
+    >
       <div class="p-6 overflow-y-auto flex-1">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">View History</h2>
-        <div v-if="historyStore.history.length === 0" class="text-sm text-gray-500">
+        <h2 class="text-lg font-bold text-gray-900 mb-4 tracking-tight">
+          View History
+        </h2>
+        <div
+          v-if="historyStore.history.length === 0"
+          class="text-sm text-gray-400"
+        >
           No history yet
         </div>
         <ul class="space-y-2">
           <li
             v-for="(item, index) in historyStore.history"
             :key="index"
-            class="p-3 rounded-lg bg-gray-50 hover:bg-blue-100 cursor-pointer transition-colors"
+            class="p-3 rounded-xl bg-white hover:bg-blue-50 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md border border-gray-100 hover:border-blue-200"
             @click="openHistoryItem(item)"
           >
             <p class="font-medium text-gray-800 text-sm truncate">
               {{ item.title }}
             </p>
-            <p class="text-xs text-gray-500">{{ item.tags.join(", ") }}</p>
+            <p class="text-xs text-gray-400">{{ item.tags.join(", ") }}</p>
           </li>
         </ul>
       </div>
