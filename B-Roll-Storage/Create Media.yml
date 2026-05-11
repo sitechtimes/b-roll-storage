@@ -12,30 +12,21 @@ http:
       - name: files
         type: file
         value:
-          - C:\Users\flame\Downloads\CatKaden.jpg
-        contentType: File
-      - name: files
-        type: file
-        value:
-          - C:\Users\flame\Downloads\SmallBoy.png
+          - C:\Users\flame\Downloads\ScreenRecording_05-06-2026 15-49-45_1.mov
         contentType: File
       - name: metadata
         type: text
         value: |-
           [
             {
-              "title": "Kaden Kat",
-              "tags": ["femboy", "meow"]
-            },
-            {
-              "title": "Josephine",
-              "tags": ["boy", "small"]
+              "title": "PERSON",
+              "tags": ["video"]
             }
             ]
         contentType: Text
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc4MDc4NTE5LCJleHAiOjE3NzgxMDAxMTl9.wFrJfNCCs-6NTbtb8udBJDRRGXyYotW7wLzmWlO1e2o
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc4MTY0NTE1LCJleHAiOjE3NzgxODYxMTV9.nVDxtDc2731aQw7DIBImlkBoTEyshikd1U8aYxIH6RM
 
 settings:
   encodeUrl: true

@@ -84,9 +84,12 @@ async function createMedia(req: Request, res: Response) {
 
           let aiTags: string[] = [];
 
+          console.log("TYPE:", type);
+
           if (type === "image") {
             aiTags = await processImage(fullPath);
           } else {
+            console.log("VIDEO DETECTED");
             aiTags = await processVideo(fullPath);
           }
 

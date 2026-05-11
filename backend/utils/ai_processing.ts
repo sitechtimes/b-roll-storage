@@ -193,7 +193,6 @@ async function processVideo(videoPath: string): Promise<string[]> {
       }
     }
 
-    const { processImage } = require("./ai_processing");
     const tagArrays: string[][] = [];
     for (const f of frames) {
       try {
