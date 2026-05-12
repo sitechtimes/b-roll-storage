@@ -3,7 +3,7 @@
     class="min-h-screen flex items-center justify-center bg-base-200/40 p-4 font-sans"
   >
     <div
-      class="card bg-base-100 w-full max-w-2xl shadow-xl border border-base-200/60 rounded-[2rem]"
+      class="card bg-base-100 w-full max-w-2xl shadow-xl border border-base-200/60 rounded-4xl"
     >
       <div class="card-body p-8 md:p-12">
         <div class="mb-8 text-center">
@@ -19,7 +19,7 @@
 
         <!-- Upload Dropzone -->
         <div
-          class="w-full border-2 border-dashed border-base-300 rounded-[1.5rem] p-2 mb-2 transition-all duration-300 group overflow-hidden"
+          class="w-full border-2 border-dashed border-base-300 rounded-3xl p-2 mb-2 transition-all duration-300 group overflow-hidden"
           :class="{
             'hover:border-primary/50 hover:bg-base-200/50 cursor-pointer':
               !hasFile,
