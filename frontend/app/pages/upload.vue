@@ -17,7 +17,6 @@
           </p>
         </div>
 
-        <!-- Upload Dropzone -->
         <div
           class="w-full border-2 border-dashed border-base-300 rounded-3xl p-2 mb-2 transition-all duration-300 group overflow-hidden"
           :class="{
@@ -80,7 +79,6 @@
           </div>
         </div>
 
-        <!-- File Info & Remove -->
         <div
           v-if="hasFile"
           class="flex flex-wrap justify-between items-center px-4 mb-2 pb-6 border-b border-base-200"
