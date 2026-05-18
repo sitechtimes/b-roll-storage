@@ -150,8 +150,10 @@ async function processVideo(videoPath: string): Promise<string[]> {
         "1",
         "-q:v",
         "2",
-        "-f",
-        "image2",
+        "-pix_fmt",
+        "yuvj420p",
+        "-update",
+        "1",
         "-y",
         out,
       ];
