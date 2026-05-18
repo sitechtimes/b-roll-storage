@@ -4,7 +4,7 @@ import { MediaType } from "../utils/mediaType";
 export interface IMedia extends mongoose.Document {
   title: string;
   type: MediaType;
-  url: string;
+  path: string;
   tags: string[];
 }
 

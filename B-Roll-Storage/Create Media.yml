@@ -7,19 +7,26 @@ http:
   method: POST
   url: "{{base_url}}/medias/"
   body:
-    type: json
-    data: |-
-      [
-        {
-          "title": "Deniz Pigeon",
-          "type": "image",
-          "path": "C:\\Users\\flame\\Downloads\\Pigeon-Test.jpg",
-          "tags": ["deniz", "bird"]
-        }
-      ]
+    type: multipart-form
+    data:
+      - name: files
+        type: file
+        value:
+          - C:\Users\flame\Downloads\ScreenRecording_05-06-2026 15-49-45_1.mov
+        contentType: File
+      - name: metadata
+        type: text
+        value: |-
+          [
+            {
+              "title": "PERSON",
+              "tags": ["video"]
+            }
+            ]
+        contentType: Text
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc3NTE4MjUyLCJleHAiOjE3Nzc1Mzk4NTJ9.phOb5LjFlGc0Wh-e-wzJ64Id3EXHTnogIVnO9wvrUIM
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MTE1NDMzLCJleHAiOjE3NzkxMzcwMzN9.VP9cqz8rJWqeBdQtudYET6Ph0AIGUp_s4P7c3KsRBa4
 
 settings:
   encodeUrl: true
