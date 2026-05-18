@@ -44,9 +44,6 @@ async function getMedia(req: Request, res: Response) {
 }
 
 async function createMedia(req: Request, res: Response) {
-  console.log("FILES:", req.files);
-  console.log("BODY:", req.body);
-
   try {
     const files = req.files as Express.Multer.File[];
 
@@ -83,8 +80,6 @@ async function createMedia(req: Request, res: Response) {
           }
 
           let aiTags: string[] = [];
-
-          console.log("TYPE:", type);
 
           if (type === "image") {
             aiTags = await processImage(fullPath);
