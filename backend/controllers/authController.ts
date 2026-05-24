@@ -196,6 +196,7 @@ async function sendVerify(req: Request, res: Response) {
     });
   }
 }
+
 module.exports = {
   signUp,
   signIn,
