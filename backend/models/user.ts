@@ -8,6 +8,8 @@ export interface IUser extends mongoose.Document {
   password: string;
   role: UserRole;
   recents: string[];
+  verificationCode: string | undefined;
+  verified: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -39,6 +41,8 @@ const schemaDefinition = {
     default: [] as string[],
     required: true,
   },
+  verificationCode: { type: String, required: false },
+  verified: { type: Boolean, default: false },
 } as const;
 
 const userSchema = new mongoose.Schema<IUser>(schemaDefinition, {
@@ -48,6 +52,7 @@ const userSchema = new mongoose.Schema<IUser>(schemaDefinition, {
       delete ret._id;
       delete ret.__v;
       delete ret.password;
+      delete ret.verificationCode;
     },
   },
 });

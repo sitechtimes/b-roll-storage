@@ -10,7 +10,7 @@ export const requireAuth = [
 
     const user = await User.findById(req.currentUser.id);
 
-    if (!user) return void res.sendStatus(401); //if (!user || !user.verified) return void res.sendStatus(401);
+    if (!user || !user.verified) return void res.sendStatus(401);
 
     next();
   },
