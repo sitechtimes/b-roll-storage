@@ -3,6 +3,9 @@ import { User } from "../models/user";
 import { UserRole } from "../utils/userRole";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import nodemailer from "nodemailer";
+
+const emailCooldown = 60; // email verification cooldown in seconds
 
 async function signUp(req: Request, res: Response) {
   const { name, email, password, role } = req.body;
@@ -60,10 +63,144 @@ async function signOut(req: Request, res: Response) {
   // this returns a success message, the actual removal of the token occurs in the frontend
 }
 
+async function verify(req: Request, res: Response) {
+  const { token } = req.query;
+  if (typeof token !== "string")
+    return res.status(401).json({ error: "EVIL_TOKEN" });
+
+  const user = await User.findOne({ verificationCode: token });
+
+  if (!user) return res.status(401).json({ error: "INVALID_TOKEN" });
+
+  if (!process.env.JWT_KEY)
+    return res.status(500).json({ error: "KRILL_ISSUE" });
+
+  try {
+    jwt.verify(token, process.env.JWT_KEY);
+  } catch {
+    return res.status(401).json({ message: "INVALID_TOKEN" });
+  }
+
+  user.verificationCode = undefined;
+  user.verified = true;
+  await user.save();
+
+  const payload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const userJWT = jwt.sign(payload, process.env.JWT_KEY!, { expiresIn: "6h" });
+
+  res.status(200).send({ ...user.toJSON(), token: userJWT });
+}
+
+async function sendVerify(req: Request, res: Response) {
+  if (!req.currentUser) {
+    return res.status(401).json({
+      error: "INVALID_CREDENTIALS",
+    });
+  }
+
+  const { email } = req.currentUser;
+
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser) {
+    return res.status(401).json({
+      error: "INVALID_CREDENTIALS",
+    });
+  }
+
+  if (existingUser.verified) {
+    return res.status(200).json({
+      verified: true,
+    });
+  }
+
+  // check cooldown if token already exists
+  if (existingUser.verificationCode) {
+    const decoded = jwt.decode(
+      existingUser.verificationCode,
+    ) as JwtPayload | null;
+
+    const issuedAt = decoded?.iat ?? 0;
+
+    const cooldownEnds = (issuedAt + emailCooldown) * 1000;
+
+    // frontend asking for remaining cooldown time only
+    if (!req.body?.newToken) {
+      return res.status(200).json({
+        message: "checking in",
+        time: cooldownEnds,
+      });
+    }
+
+    // still on cooldown
+    if (Date.now() / 1000 - issuedAt < emailCooldown) {
+      return res.status(429).json({
+        message: "email machine on cooldown",
+        time: cooldownEnds,
+      });
+    }
+  }
+
+  const verificationToken = jwt.sign({ email }, process.env.JWT_KEY!, {
+    expiresIn: "20m",
+  });
+
+  existingUser.verificationCode = verificationToken;
+
+  await existingUser.save();
+
+  const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "B-roll Storage — Verify your email",
+    html: `
+      Hello there,
+      click the following link to verify your email:
+      <a href="${process.env.URL}:3000/auth/verify?token=${verificationToken}">
+        Verify Email
+      </a>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+
+    console.log("EMAIL SENT");
+    console.log(info);
+
+    return res.status(201).json({
+      message: "verification sent",
+      time: Date.now() + emailCooldown * 1000,
+    });
+  } catch (err) {
+    console.error("EMAIL FAILED");
+    console.error(err);
+
+    return res.status(500).json({
+      error: "failed to send email",
+    });
+  }
+}
+
 module.exports = {
   signUp,
   signIn,
   signOut,
-  //verify,
-  //sendVerify
+  verify,
+  sendVerify,
 };

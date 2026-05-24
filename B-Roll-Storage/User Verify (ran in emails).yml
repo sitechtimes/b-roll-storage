@@ -1,0 +1,19 @@
+info:
+  name: User Verify (ran in emails)
+  type: http
+  seq: 13
+
+http:
+  method: GET
+  url: "{{base_url}}/auth/verify?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVjQGdtYWlsLmNvbSIsImlhdCI6MTc3OTU5MjgxMywiZXhwIjoxNzc5NTk0MDEzfQ.5LDfqfjdY9p8YHNljKo9R4b7jamuZsIWk5nl_S1zls8"
+  params:
+    - name: token
+      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVjQGdtYWlsLmNvbSIsImlhdCI6MTc3OTU5MjgxMywiZXhwIjoxNzc5NTk0MDEzfQ.5LDfqfjdY9p8YHNljKo9R4b7jamuZsIWk5nl_S1zls8
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

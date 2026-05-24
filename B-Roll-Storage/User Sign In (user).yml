@@ -1,19 +1,17 @@
 info:
-  name: User Sign Up
+  name: User Sign In (user)
   type: http
-  seq: 8
+  seq: 10
 
 http:
   method: POST
-  url: "{{base_url}}/auth/signup"
+  url: "{{base_url}}/auth/signin"
   body:
     type: json
     data: |-
       {
-        "name": "Haobin Z",
         "email": "hz@gmail.com",
-        "password": "hzpassword123",
-        "role": "user"
+        "password": "hzpassword123"
       }
   auth: inherit
 
