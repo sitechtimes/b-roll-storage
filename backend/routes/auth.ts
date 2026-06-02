@@ -36,4 +36,8 @@ router.post("/verify", currentUser, authController.sendVerify);
 // link from email uses GET
 router.get("/verify", authController.verify);
 
+router.post("/send-reset", currentUser, authController.sendReset);
+
+router.post("/reset-password", currentUser, authController.sendReset);
+
 module.exports = router;
