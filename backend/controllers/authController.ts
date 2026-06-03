@@ -241,7 +241,7 @@ async function sendReset(req: Request, res: Response) {
     html: `
       Hello there,
       click the following link to reset your password:
-      <a href="${process.env.URL}:3000/auth/reset-password?token=${resetToken}">
+      <a href="${process.env.FRONTEND_URL}/reset-password?token=${resetToken}">
         Reset Password
       </a>
     `,

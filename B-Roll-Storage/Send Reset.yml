@@ -1,0 +1,15 @@
+info:
+  name: Send Reset
+  type: http
+  seq: 22
+
+http:
+  method: POST
+  url: "{{base_url}}/auth/send-reset"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
