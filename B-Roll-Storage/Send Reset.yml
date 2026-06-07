@@ -1,17 +1,16 @@
 info:
-  name: User Sign In (user)
+  name: Send Reset
   type: http
-  seq: 10
+  seq: 22
 
 http:
   method: POST
-  url: "{{base_url}}/auth/signin"
+  url: "{{base_url}}/auth/send-reset"
   body:
     type: json
     data: |-
       {
-        "email": "hz@gmail.com",
-        "password": "horsegooner"
+        "email": "hz@gmail.com"
       }
   auth: inherit
 

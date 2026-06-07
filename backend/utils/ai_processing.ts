@@ -199,7 +199,6 @@ async function processVideo(videoPath: string): Promise<string[]> {
       try {
         const tags = await processImage(f);
         if (Array.isArray(tags)) tagArrays.push(tags);
-        // console.log(tags);
       } catch (e) {
         console.error(e);
       }

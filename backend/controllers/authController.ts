@@ -119,7 +119,6 @@ async function sendVerify(req: Request, res: Response) {
     });
   }
 
-  // check cooldown if token already exists
   if (existingUser.verificationCode) {
     const decoded = jwt.decode(
       existingUser.verificationCode,
@@ -129,7 +128,6 @@ async function sendVerify(req: Request, res: Response) {
 
     const cooldownEnds = (issuedAt + emailCooldown) * 1000;
 
-    // frontend asking for remaining cooldown time only
     if (!req.body?.newToken) {
       return res.status(200).json({
         message: "checking in",
@@ -137,7 +135,6 @@ async function sendVerify(req: Request, res: Response) {
       });
     }
 
-    // still on cooldown
     if (Date.now() / 1000 - issuedAt < emailCooldown) {
       return res.status(429).json({
         message: "email machine on cooldown",
@@ -179,10 +176,6 @@ async function sendVerify(req: Request, res: Response) {
 
   try {
     const info = await transport.sendMail(mailOptions);
-
-    console.log("EMAIL SENT");
-    console.log(info);
-
     return res.status(201).json({
       message: "verification sent",
       time: Date.now() + emailCooldown * 1000,
@@ -197,10 +190,87 @@ async function sendVerify(req: Request, res: Response) {
   }
 }
 
+async function sendReset(req: Request, res: Response) {
+  const email = req.body.email;
+
+  const resetToken = jwt.sign({ email }, process.env.JWT_KEY!, {
+    expiresIn: "20m",
+  });
+
+  const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "B-roll Storage — Reset passwrod",
+    // send it to the frontend page where they will input a new password, then use the token and password to run the function below
+    html: `
+      Hello there,
+      click the following link to reset your password:
+      <a href="${process.env.FRONTEND_URL}/reset-password?token=${resetToken}">
+        Reset Password
+      </a>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+
+    return res.status(201).json({
+      message: "reset sent",
+      time: Date.now() + emailCooldown * 1000,
+    });
+  } catch (err) {
+    console.error("EMAIL FAILED");
+    console.error(err);
+
+    return res.status(500).json({
+      error: "failed to send email",
+    });
+  }
+}
+
+async function resetPassword(req: Request, res: Response) {
+  const token = req.query.token;
+  const newPassword = req.body.password;
+
+  if (typeof token !== "string") {
+    return res.status(400).json({ message: "Token is required" });
+  }
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_KEY!) as JwtPayload;
+
+    const user = await User.findOne({ email: payload.email });
+    if (!user) return res.status(401).json({ error: "INVALID_TOKEN" });
+
+    try {
+      user.password = newPassword;
+      await user.save();
+    } catch (err) {
+      return res.status(500).json({ error: "Save failed" });
+    }
+
+    return res.json({ message: "New password saved" });
+  } catch {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
+
 module.exports = {
   signUp,
   signIn,
   signOut,
   verify,
   sendVerify,
+  sendReset,
+  resetPassword,
 };
