@@ -6,6 +6,12 @@ info:
 http:
   method: POST
   url: "{{base_url}}/auth/send-reset"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "hz@gmail.com"
+      }
   auth: inherit
 
 settings:

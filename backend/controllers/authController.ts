@@ -119,7 +119,6 @@ async function sendVerify(req: Request, res: Response) {
     });
   }
 
-  // check cooldown if token already exists
   if (existingUser.verificationCode) {
     const decoded = jwt.decode(
       existingUser.verificationCode,
@@ -129,7 +128,6 @@ async function sendVerify(req: Request, res: Response) {
 
     const cooldownEnds = (issuedAt + emailCooldown) * 1000;
 
-    // frontend asking for remaining cooldown time only
     if (!req.body?.newToken) {
       return res.status(200).json({
         message: "checking in",
@@ -137,7 +135,6 @@ async function sendVerify(req: Request, res: Response) {
       });
     }
 
-    // still on cooldown
     if (Date.now() / 1000 - issuedAt < emailCooldown) {
       return res.status(429).json({
         message: "email machine on cooldown",
@@ -198,27 +195,7 @@ async function sendVerify(req: Request, res: Response) {
 }
 
 async function sendReset(req: Request, res: Response) {
-  if (!req.currentUser) {
-    return res.status(401).json({
-      error: "INVALID_CREDENTIALS",
-    });
-  }
-
-  const { email } = req.currentUser;
-
-  const existingUser = await User.findOne({ email });
-
-  if (!existingUser) {
-    return res.status(401).json({
-      error: "INVALID_CREDENTIALS",
-    });
-  }
-
-  if (existingUser.verified) {
-    return res.status(200).json({
-      verified: true,
-    });
-  }
+  const email = req.body.email;
 
   const resetToken = jwt.sign({ email }, process.env.JWT_KEY!, {
     expiresIn: "20m",
@@ -238,6 +215,7 @@ async function sendReset(req: Request, res: Response) {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "B-roll Storage — Reset passwrod",
+    // send it to the frontend page where they will input a new password, then use the token and password to run the function below
     html: `
       Hello there,
       click the following link to reset your password:
@@ -288,7 +266,7 @@ async function resetPassword(req: Request, res: Response) {
       return res.status(500).json({ error: "Save failed" });
     }
 
-    return res.json({ message: "Token valid" });
+    return res.json({ message: "New password saved" });
   } catch {
     return res.status(401).json({ message: "Invalid token" });
   }
@@ -300,6 +278,6 @@ module.exports = {
   signOut,
   verify,
   sendVerify,
-  sendReset, // do something with emailing, token stuff, sigining with (req.body) email, finding user etc etc, link to some page where the second route runs
-  resetPassword, //get new password (req.body), get user by token, token will be a param or header
+  sendReset,
+  resetPassword,
 };
