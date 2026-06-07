@@ -176,10 +176,6 @@ async function sendVerify(req: Request, res: Response) {
 
   try {
     const info = await transport.sendMail(mailOptions);
-
-    console.log("EMAIL SENT");
-    console.log(info);
-
     return res.status(201).json({
       message: "verification sent",
       time: Date.now() + emailCooldown * 1000,
@@ -227,9 +223,6 @@ async function sendReset(req: Request, res: Response) {
 
   try {
     const info = await transport.sendMail(mailOptions);
-
-    console.log("EMAIL SENT");
-    console.log(info);
 
     return res.status(201).json({
       message: "reset sent",
