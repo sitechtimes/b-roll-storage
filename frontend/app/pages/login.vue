@@ -78,6 +78,8 @@ const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
+const API_BASE = "http://localhost:3001"; // Replace with your actual API base URL
+
 async function handleLogin() {
   errorMessage.value = "";
 
@@ -88,12 +90,15 @@ async function handleLogin() {
 
   isSubmitting.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const response: any = await $fetch(`${API_BASE}/auth/signin`, {
+      method: "POST",
+      body: { email: email.value, password: password.value },
+    });
 
-    auth.signedIn();
+    auth.signedIn(response, response.token);
     await navigateTo("/library");
-  } catch {
-    errorMessage.value = "Something went wrong. Please try again.";
+  } catch (err: any) {
+    errorMessage.value = err?.data?.error || "Login failed. Please try again.";
   } finally {
     isSubmitting.value = false;
   }
@@ -103,7 +108,7 @@ async function handleGuestSignIn() {
   errorMessage.value = "";
   try {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    auth.signedIn();
+    auth.signedIn({name: "Guest"}, "");
     await navigateTo("/library");
   } catch {
     errorMessage.value = "Unable to sign in as guest. Please try again.";
