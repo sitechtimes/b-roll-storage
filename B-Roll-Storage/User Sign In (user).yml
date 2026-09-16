@@ -1,0 +1,22 @@
+info:
+  name: User Sign In (user)
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{base_url}}/auth/signin"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "hz@gmail.com",
+        "password": "horsegooner"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
