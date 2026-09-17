@@ -62,6 +62,7 @@
           >
             Guest Sign In
           </button>
+          Don't have an account? <NuxtLink to="/signup" class="text-primary hover:underline">Sign up here.</NuxtLink>
         </form>
       </div>
     </div>
@@ -78,7 +79,7 @@ const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-const API_BASE = "http://localhost:3001"; // Replace with your actual API base URL
+const API_BASE = "http://localhost:3000"; // Replace with your actual API base URL
 
 async function handleLogin() {
   errorMessage.value = "";
