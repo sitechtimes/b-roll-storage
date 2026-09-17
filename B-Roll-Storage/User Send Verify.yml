@@ -1,0 +1,17 @@
+info:
+  name: User Send Verify
+  type: http
+  seq: 12
+
+http:
+  method: POST
+  url: "{{base_url}}/auth/verify"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMTI3NDc1MzVmZDg4YjY2OTM1Njg0OSIsImVtYWlsIjoiaHpAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Nzk1OTQzNjUsImV4cCI6MTc3OTYxNTk2NX0.PtynoZJKjZtD1hnqNWBQE0erOHGtRs8CJJyukuc6wPg
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
