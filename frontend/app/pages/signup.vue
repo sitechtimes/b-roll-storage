@@ -96,7 +96,7 @@ const isSubmitting = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "http://localhost:3001";
 
 async function handleSignup() {
   errorMessage.value = "";

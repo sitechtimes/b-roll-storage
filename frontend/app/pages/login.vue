@@ -79,7 +79,7 @@ const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-const API_BASE = "http://localhost:3000"; // Replace with your actual API base URL
+const API_BASE = "http://localhost:3001";
 
 async function handleLogin() {
   errorMessage.value = "";
@@ -95,6 +95,10 @@ async function handleLogin() {
       method: "POST",
       body: { email: email.value, password: password.value },
     });
+
+    if (!response?.token) {
+      throw new Error("The server did not return a login token.");
+    }
 
     auth.signedIn(response, response.token);
     await navigateTo("/library");
