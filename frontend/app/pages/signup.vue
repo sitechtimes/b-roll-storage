@@ -61,10 +61,6 @@
             {{ errorMessage }}
           </p>
 
-          <p v-if="successMessage" class="text-sm text-success">
-            {{ successMessage }}
-          </p>
-
           <button
             type="submit"
             class="btn btn-primary w-full mt-2"
@@ -94,13 +90,11 @@ const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
-const successMessage = ref("");
 
 const API_BASE = "http://localhost:3001";
 
 async function handleSignup() {
   errorMessage.value = "";
-  successMessage.value = "";
 
   if (password.value.length < 8 || password.value.length > 24) {
     errorMessage.value = "Password must be between 8 and 24 characters.";
@@ -119,8 +113,7 @@ async function handleSignup() {
       },
     });
 
-    successMessage.value = "Account created. Redirecting to login...";
-    await navigateTo("/login");
+    await navigateTo({ path: "/login", query: { registered: "1" } });
   } catch (error: any) {
     errorMessage.value =
       error?.data?.error ||
