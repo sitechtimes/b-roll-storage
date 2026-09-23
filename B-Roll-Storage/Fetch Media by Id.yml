@@ -5,12 +5,14 @@ info:
 
 http:
   method: GET
-  url: "{{base_url}}/medias/69b17eacc48caa9c79b69cae"
+  url: "{{base_url}}/medias/69ef75eb35a0799c02e08ee0"
   auth:
     type: bearer
+    token: ""
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

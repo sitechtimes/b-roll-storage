@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: "{{base_url}}/medias/69b17e9bc48caa9c79b69cab"
+  url: "{{base_url}}/medias/6ab296c64db8c9457f1581b5"
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkwMTc0NDAwLCJleHAiOjE3OTAxOTYwMDB9.MQCNAUGXyaFgicCQLFyZUIayaolWJ0JArS4UgdbwiS8
