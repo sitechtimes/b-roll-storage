@@ -7,6 +7,44 @@ import nodemailer from "nodemailer";
 
 const emailCooldown = 60; // email verification cooldown in seconds
 
+async function sendVerificationEmail(user: InstanceType<typeof User>) {
+  const verificationToken = jwt.sign(
+    { email: user.email },
+    process.env.JWT_KEY!,
+    { expiresIn: "20m" },
+  );
+
+  user.verificationCode = verificationToken;
+  await user.save();
+
+  const backendUrl = (
+    process.env.BACKEND_URL ?? `http://localhost:${process.env.PORT ?? 3001}`
+  ).replace(/\/$/, "");
+
+  const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  await transport.sendMail({
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "B-roll Storage — Verify your email",
+    html: `
+      Hello there,
+      click the following unsuspicious link and totally not a malicious link to verify your email:
+      <a href="${backendUrl}/auth/verify?token=${verificationToken}">
+        Verify Email
+      </a>
+    `,
+  });
+}
+
 async function signUp(req: Request, res: Response) {
   const { name, email, password, role } = req.body;
 
@@ -25,7 +63,19 @@ async function signUp(req: Request, res: Response) {
       password,
       role: assignedRole,
     });
-    return res.status(200).json(newUser);
+
+    try {
+      await sendVerificationEmail(newUser);
+    } catch (err) {
+      console.error("EMAIL FAILED", err);
+      return res.status(500).json({
+        error: "Account created, but the verification email could not be sent",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Account created. Verification email sent.",
+    });
   } catch {
     return res.status(500).json({ error: "Sign up failed" });
   }
@@ -143,46 +193,14 @@ async function sendVerify(req: Request, res: Response) {
     }
   }
 
-  const verificationToken = jwt.sign({ email }, process.env.JWT_KEY!, {
-    expiresIn: "20m",
-  });
-
-  existingUser.verificationCode = verificationToken;
-
-  await existingUser.save();
-
-  const transport = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "B-roll Storage — Verify your email",
-    html: `
-      Hello there,
-      click the following link to verify your email:
-      <a href="${process.env.URL}:3000/auth/verify?token=${verificationToken}">
-        Verify Email
-      </a>
-    `,
-  };
-
   try {
-    const info = await transport.sendMail(mailOptions);
+    await sendVerificationEmail(existingUser);
     return res.status(201).json({
       message: "verification sent",
       time: Date.now() + emailCooldown * 1000,
     });
   } catch (err) {
-    console.error("EMAIL FAILED");
-    console.error(err);
+    console.error("EMAIL FAILED", err);
 
     return res.status(500).json({
       error: "failed to send email",
