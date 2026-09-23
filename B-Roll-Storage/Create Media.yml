@@ -26,10 +26,11 @@ http:
         contentType: Text
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc5MTE1NDMzLCJleHAiOjE3NzkxMzcwMzN9.VP9cqz8rJWqeBdQtudYET6Ph0AIGUp_s4P7c3KsRBa4
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkwMDg4NjIwLCJleHAiOjE3OTAxMTAyMjB9.xSgm3SeI8jJAtJEpHEWCgnwaSktxT1zyxRJ95stU_Cc
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
