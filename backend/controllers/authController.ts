@@ -7,19 +7,14 @@ import nodemailer from "nodemailer";
 
 const emailCooldown = 60; // email verification cooldown in seconds
 
+function generateCode() {
+  return Math.floor(Math.random()*1000000).toString();
+}
+
 async function sendVerificationEmail(user: InstanceType<typeof User>) {
-  const verificationToken = jwt.sign(
-    { email: user.email },
-    process.env.JWT_KEY!,
-    { expiresIn: "20m" },
-  );
-
-  user.verificationCode = verificationToken;
+  const code = generateCode();
+  user.verificationCode = code;
   await user.save();
-
-  const backendUrl = (
-    process.env.BACKEND_URL ?? `http://localhost:${process.env.PORT ?? 3001}`
-  ).replace(/\/$/, "");
 
   const transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -37,10 +32,8 @@ async function sendVerificationEmail(user: InstanceType<typeof User>) {
     subject: "B-roll Storage — Verify your email",
     html: `
       Hello there,
-      click the following unsuspicious link and totally not a malicious link to verify your email:
-      <a href="${backendUrl}/auth/verify?token=${verificationToken}">
-        Verify Email
-      </a>
+      <br>
+      Your verification code is: <strong>${code}</strong>
     `,
   });
 }
