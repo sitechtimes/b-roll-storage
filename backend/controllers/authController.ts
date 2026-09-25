@@ -8,7 +8,9 @@ import nodemailer from "nodemailer";
 const emailCooldown = 60; // email verification cooldown in seconds
 
 function generateCode() {
-  return Math.floor(Math.random()*1000000).toString();
+  return Math.floor(Math.random() * 1_000_000)
+    .toString()
+    .padStart(6, "0");
 }
 
 async function sendVerificationEmail(user: InstanceType<typeof User>) {
@@ -80,6 +82,12 @@ async function signIn(req: Request, res: Response) {
 
   if (!currentUser) {
     return res.status(409).json({ error: "Email does not exist" });
+  }
+
+  if (!currentUser.verified) {
+    return res.status(403).json({
+      error: "Please verify your email before signing in.",
+    });
   }
 
   if (!(await bcrypt.compare(password, currentUser.password))) {
@@ -276,11 +284,31 @@ async function resetPassword(req: Request, res: Response) {
   }
 }
 
+async function verifyCode(req: Request, res: Response) {
+  const { email, code } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  if (user.verificationCode !== String(code).padStart(6, "0")) {
+    return res.status(400).json({ error: "Invalid verification code" });
+  }
+
+  user.verificationCode = undefined;
+  user.verified = true;
+  await user.save();
+
+  return res.status(200).json({ message: "Account verified" });
+}
+
 module.exports = {
   signUp,
   signIn,
   signOut,
-  verify,
+  verifyCode,
   sendVerify,
   sendReset,
   resetPassword,

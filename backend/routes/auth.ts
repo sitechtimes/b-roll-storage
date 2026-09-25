@@ -32,32 +32,10 @@ router.post(
 
 router.post("/signout", authController.signOut);
 
-// after signup, POST to get a token
-/*router.post("/verify", currentUser, authController.sendVerify);
-// link from email uses GET
-router.get("/verify", authController.verify);
-*/
 router.post("/send-reset", currentUser, authController.sendReset);
 
 router.post("/reset-password", currentUser, authController.resetPassword);
 
-router.post("/verify-code", async (req, res) => {
-  const { email, code } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (!user) return res.status(400).json({ error: "User not found" });
-  if (user.verified) return res.status(200).json({ verified: true });
-
-  if (user.verificationCode !== code) {
-    return res.status(400).json({ error: "Invalid verification code" });
-  }
-
-  user.verificationCode = undefined;
-  user.verified = true;
-  await user.save();
-
-  return res.status(200).json({ message: "Account verified" });
-});
+router.post("/verify-code", authController.verifyCode);
 
 module.exports = router;
