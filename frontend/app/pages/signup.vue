@@ -113,10 +113,7 @@ async function handleSignup() {
       },
     });
 
-    await navigateTo({
-      path: "/verify",
-      query: { email: email.value },
-    });
+    await navigateTo({ path: "/login", query: { registered: "1" } });
   } catch (error: any) {
     errorMessage.value =
       error?.data?.error ||

@@ -7,16 +7,19 @@ import nodemailer from "nodemailer";
 
 const emailCooldown = 60; // email verification cooldown in seconds
 
-function generateCode() {
-  return Math.floor(Math.random() * 1_000_000)
-    .toString()
-    .padStart(6, "0");
-}
-
 async function sendVerificationEmail(user: InstanceType<typeof User>) {
-  const code = generateCode();
-  user.verificationCode = code;
+  const verificationToken = jwt.sign(
+    { email: user.email },
+    process.env.JWT_KEY!,
+    { expiresIn: "20m" },
+  );
+
+  user.verificationCode = verificationToken;
   await user.save();
+
+  const backendUrl = (
+    process.env.BACKEND_URL ?? `http://localhost:${process.env.PORT ?? 3001}`
+  ).replace(/\/$/, "");
 
   const transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -31,11 +34,12 @@ async function sendVerificationEmail(user: InstanceType<typeof User>) {
   await transport.sendMail({
     from: process.env.EMAIL_USER,
     to: user.email,
-    subject: "B-roll Storage — Verify your email",
+    subject: "B-roll Storage - Verify your email",
     html: `
-      Hello there,
-      <br>
-      Your verification code is: <strong>${code}</strong>
+      <p>Click the link below to verify your account:</p>
+      <a href="${backendUrl}/auth/verify?token=${verificationToken}">
+        Verify Email
+      </a>
     `,
   });
 }
