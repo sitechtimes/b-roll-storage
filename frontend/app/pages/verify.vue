@@ -49,8 +49,8 @@
               inputmode="numeric"
               autocomplete="one-time-code"
               maxlength="6"
-              placeholder="000001"
-              class="input input-bordered w-full text-center text-2xl tracking-[0.35em]"
+              placeholder="000000"
+              class="input input-bordered w-full text-center text-2xl tracking-[0.35em] mb-4"
               required
             />
           </label>

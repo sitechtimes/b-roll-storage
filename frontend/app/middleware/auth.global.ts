@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
-  if (!auth.isLoggedIn) {
+  if (!auth.isLoggedIn && to.path !== "/verify") {
     return navigateTo("/login");
   }
 });
