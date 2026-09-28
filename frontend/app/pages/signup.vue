@@ -113,12 +113,13 @@ async function handleSignup() {
       },
     });
 
-    await navigateTo({ path: "/login", query: { registered: "1" } });
+    await navigateTo("/login");
   } catch (error: any) {
     errorMessage.value =
       error?.data?.error ||
       error?.data?.errors?.[0]?.message ||
       "Unable to create account.";
+      console.log(error);
   } finally {
     isSubmitting.value = false;
   }

@@ -36,6 +36,7 @@ async function sendVerificationEmail(user: InstanceType<typeof User>) {
     to: user.email,
     subject: "B-roll Storage - Verify your email",
     html: `
+    <p>Hello ${user.name},</p>
       <p>Click the link below to verify your account:</p>
       <a href="${backendUrl}/auth/verify?token=${verificationToken}">
         Verify Email
@@ -312,7 +313,7 @@ module.exports = {
   signUp,
   signIn,
   signOut,
-  verifyCode,
+  verify,
   sendVerify,
   sendReset,
   resetPassword,

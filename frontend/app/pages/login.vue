@@ -38,12 +38,8 @@
             />
           </label>
 
-          <p v-if="errorMessage" class="text-sm text-error">
+          <p v-if="errorMessage" class="text-sm text-error mb-0">
             {{ errorMessage }}
-          </p>
-
-          <p v-if="successMessage" class="text-sm text-success mb-0 transition-discrete transition duration-200">
-            {{ successMessage }}
           </p>
 
           <button
@@ -82,9 +78,6 @@ const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
-const route = useRoute();
-const successMessage =
-  route.query.registered === "1" ? "Account created. Please sign in." : "";
 
 const API_BASE = "http://localhost:3001";
 
