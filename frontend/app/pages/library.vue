@@ -71,7 +71,7 @@
       >
         <div
           v-for="item in filteredMedia"
-          :key="item._id.$oid"
+          :key="item.id"
           class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
           @click="openLibraryItem(item)"
         >
@@ -117,9 +117,7 @@ function closeLibraryItem() {
 
 /* below is just for the test data file in here for now */
 interface Media {
-  _id: {
-    $oid: string;
-  };
+  id: string;
   title: string;
   type: string;
   tags: string[];
@@ -143,7 +141,7 @@ const filteredMedia = computed(() => {
 
 onMounted(async () => {
   try {
-    const response = await fetch("/test-data.json");
+    const response = await fetch("/api/medias/");
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
