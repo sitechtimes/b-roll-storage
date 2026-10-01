@@ -90,28 +90,13 @@ const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
-
-const API_BASE = "http://localhost:3001";
+const auth = useAuthStore();
 
 async function handleSignup() {
-  errorMessage.value = "";
-
-  if (password.value.length < 8 || password.value.length > 24) {
-    errorMessage.value = "Password must be between 8 and 24 characters.";
-    return;
-  }
-
   isSubmitting.value = true;
 
   try {
-    await $fetch(`${API_BASE}/auth/signup`, {
-      method: "POST",
-      body: {
-        name: name.value,
-        email: email.value,
-        password: password.value,
-      },
-    });
+    await auth.signUp(name.value, email.value, password.value);
 
     await navigateTo("/login");
   } catch (error: any) {

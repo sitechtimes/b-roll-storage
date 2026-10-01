@@ -79,7 +79,6 @@ const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-const API_BASE = "http://localhost:3001";
 
 async function handleLogin() {
   errorMessage.value = "";
@@ -91,16 +90,7 @@ async function handleLogin() {
 
   isSubmitting.value = true;
   try {
-    const response: any = await $fetch(`${API_BASE}/auth/signin`, {
-      method: "POST",
-      body: { email: email.value, password: password.value },
-    });
-
-    if (!response?.token) {
-      throw new Error("The server did not return a login token.");
-    }
-
-    auth.signedIn(response, response.token);
+    await auth.signIn(email.value, password.value);
     await navigateTo("/library");
   } catch (err: any) {
     errorMessage.value = err?.data?.error || "Login failed. Please try again.";
