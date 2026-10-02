@@ -15,6 +15,8 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
    },
   }
   interface SharedPublicRuntimeConfig {
+   backend: string,
+
    piniaPluginPersistedstate: any,
   }
 declare module '@nuxt/schema' {

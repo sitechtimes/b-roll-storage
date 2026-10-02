@@ -659,6 +659,7 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
+    "backend": "http://localhost:3001",
     "piniaPluginPersistedstate": {}
   }
 };
