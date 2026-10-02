@@ -1,6 +1,9 @@
-node_modules
+node_modules/
 .env
 dev.env
-.nuxt
-.output
-.data
+backend/dist/
+
+broll/
+
+recognize-anything/
+.venv

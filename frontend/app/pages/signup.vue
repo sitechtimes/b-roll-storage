@@ -4,15 +4,32 @@
   >
     <div class="card bg-base-100 w-full max-w-md shadow-sm">
       <div class="card-body p-8 md:p-10">
-        <h1 class="text-3xl font-bold text-center text-base-content">Login</h1>
+        <h1 class="text-3xl font-bold text-center text-base-content">
+          Create Account
+        </h1>
+
         <p class="text-sm text-base-content/70 text-center mt-1 mb-4">
-          Sign in to upload your B-roll.
+          Create an account to upload your B-roll.
         </p>
 
-        <form class="space-y-4 mt-1" @submit.prevent="handleLogin">
+        <form class="space-y-4 mt-1" @submit.prevent="handleSignup">
           <label class="form-control w-full">
             <span class="label">
-              <span class="label-text font-medium">Email:</span>
+              <span class="label-text font-medium">Name</span>
+            </span>
+            <input
+              v-model.trim="name"
+              type="text"
+              autocomplete="name"
+              placeholder="John Doe"
+              class="input input-bordered w-full"
+              required
+            />
+          </label>
+
+          <label class="form-control w-full">
+            <span class="label">
+              <span class="label-text font-medium">Email</span>
             </span>
             <input
               v-model.trim="email"
@@ -26,19 +43,21 @@
 
           <label class="form-control w-full">
             <span class="label">
-              <span class="label-text font-medium">Password:</span>
+              <span class="label-text font-medium">Password</span>
             </span>
             <input
               v-model="password"
               type="password"
-              autocomplete="current-password"
-              placeholder="Enter your password"
+              autocomplete="new-password"
+              placeholder="At least 8 characters"
+              minlength="8"
+              maxlength="24"
               class="input input-bordered w-full"
               required
             />
           </label>
 
-          <p v-if="errorMessage" class="text-sm text-error mb-0">
+          <p v-if="errorMessage" class="text-sm text-error">
             {{ errorMessage }}
           </p>
 
@@ -51,18 +70,12 @@
               v-if="isSubmitting"
               class="loading loading-spinner loading-xs mr-1"
             ></span>
-            {{ isSubmitting ? "Signing in..." : "Sign in" }}
+            {{ isSubmitting ? "Creating account..." : "Create account" }}
           </button>
 
-          <button
-            type="button"
-            class="btn btn-outline w-full"
-            :disabled="isSubmitting"
-            @click="handleGuestSignIn"
-          >
-            Guest Sign In
-          </button>
-          Don't have an account? <NuxtLink to="/signup" class="text-primary hover:underline">Sign up here.</NuxtLink>
+          <NuxtLink to="/login" class="btn btn-outline w-full">
+            Back to login
+          </NuxtLink>
         </form>
       </div>
     </div>
@@ -72,41 +85,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const auth = useAuthStore();
-
+const name = ref("");
 const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
+const auth = useAuthStore();
 
-
-async function handleLogin() {
-  errorMessage.value = "";
-
-  if (!email.value || !password.value) {
-    errorMessage.value = "Please enter both email and password.";
-    return;
-  }
-
+async function handleSignup() {
   isSubmitting.value = true;
+
   try {
-    await auth.signIn(email.value, password.value);
-    await navigateTo("/library");
-  } catch (err: any) {
-    errorMessage.value = err?.data?.error || "Login failed. Please try again.";
+    await auth.signUp(name.value, email.value, password.value);
+
+    await navigateTo("/login");
+  } catch (error: any) {
+    errorMessage.value =
+      error?.data?.error ||
+      error?.data?.errors?.[0]?.message ||
+      "Unable to create account.";
+      console.log(error);
   } finally {
     isSubmitting.value = false;
-  }
-}
-
-async function handleGuestSignIn() {
-  errorMessage.value = "";
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    auth.signedIn({name: "Guest"}, "");
-    await navigateTo("/library");
-  } catch {
-    errorMessage.value = "Unable to sign in as guest. Please try again.";
   }
 }
 </script>

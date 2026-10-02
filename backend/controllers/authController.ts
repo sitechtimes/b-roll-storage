@@ -7,6 +7,44 @@ import nodemailer from "nodemailer";
 
 const emailCooldown = 60; // email verification cooldown in seconds
 
+async function sendVerificationEmail(user: InstanceType<typeof User>) {
+  const verificationToken = jwt.sign(
+    { email: user.email },
+    process.env.JWT_KEY!,
+    { expiresIn: "20m" },
+  );
+
+  user.verificationCode = verificationToken;
+  await user.save();
+
+  const backendUrl = (
+    process.env.BACKEND_URL ?? `http://localhost:${process.env.PORT ?? 3001}`
+  ).replace(/\/$/, "");
+
+  const transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  await transport.sendMail({
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "B-roll Storage - Verify your email",
+    html: `
+    <p>Hello ${user.name},</p>
+      <p>Click the link below to verify your account:</p>
+      <a href="${backendUrl}/auth/verify?token=${verificationToken}">
+        Verify Email
+      </a>
+    `,
+  });
+}
+
 async function signUp(req: Request, res: Response) {
   const { name, email, password, role } = req.body;
 
@@ -25,7 +63,19 @@ async function signUp(req: Request, res: Response) {
       password,
       role: assignedRole,
     });
-    return res.status(200).json(newUser);
+
+    try {
+      await sendVerificationEmail(newUser);
+    } catch (err) {
+      console.error("EMAIL FAILED", err);
+      return res.status(500).json({
+        error: "Account created, but the verification email could not be sent",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Account created. Verification email sent.",
+    });
   } catch {
     return res.status(500).json({ error: "Sign up failed" });
   }
@@ -37,6 +87,12 @@ async function signIn(req: Request, res: Response) {
 
   if (!currentUser) {
     return res.status(409).json({ error: "Email does not exist" });
+  }
+
+  if (!currentUser.verified) {
+    return res.status(403).json({
+      error: "Please verify your email before signing in.",
+    });
   }
 
   if (!(await bcrypt.compare(password, currentUser.password))) {
@@ -143,46 +199,14 @@ async function sendVerify(req: Request, res: Response) {
     }
   }
 
-  const verificationToken = jwt.sign({ email }, process.env.JWT_KEY!, {
-    expiresIn: "20m",
-  });
-
-  existingUser.verificationCode = verificationToken;
-
-  await existingUser.save();
-
-  const transport = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "B-roll Storage — Verify your email",
-    html: `
-      Hello there,
-      click the following link to verify your email:
-      <a href="${process.env.URL}:3000/auth/verify?token=${verificationToken}">
-        Verify Email
-      </a>
-    `,
-  };
-
   try {
-    const info = await transport.sendMail(mailOptions);
+    await sendVerificationEmail(existingUser);
     return res.status(201).json({
       message: "verification sent",
       time: Date.now() + emailCooldown * 1000,
     });
   } catch (err) {
-    console.error("EMAIL FAILED");
-    console.error(err);
+    console.error("EMAIL FAILED", err);
 
     return res.status(500).json({
       error: "failed to send email",
@@ -263,6 +287,26 @@ async function resetPassword(req: Request, res: Response) {
   } catch {
     return res.status(401).json({ message: "Invalid token" });
   }
+}
+
+async function verifyCode(req: Request, res: Response) {
+  const { email, code } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  if (user.verificationCode !== String(code).padStart(6, "0")) {
+    return res.status(400).json({ error: "Invalid verification code" });
+  }
+
+  user.verificationCode = undefined;
+  user.verified = true;
+  await user.save();
+
+  return res.status(200).json({ message: "Account verified" });
 }
 
 module.exports = {
