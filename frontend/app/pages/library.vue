@@ -99,6 +99,7 @@ const historyStore = useViewHistoryStore();
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 const searchQuery = ref("");
+const backend = useRuntimeConfig().public.backend;
 
 function openLibraryItem(x: any) {
   modalView.value = true;
@@ -141,7 +142,7 @@ const filteredMedia = computed(() => {
 
 onMounted(async () => {
   try {
-    const response = await fetch("/api/medias/");
+    const response = await fetch(`${backend}/medias`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
