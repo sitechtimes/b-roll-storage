@@ -12,4 +12,9 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+    runtimeConfig: {
+    public: {
+      backend: 'http://localhost:3001',
+    },
+  },
 });

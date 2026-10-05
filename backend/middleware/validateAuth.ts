@@ -10,8 +10,13 @@ export const requireAuth = [
 
     const user = await User.findById(req.currentUser.id);
 
-    if (!user || !user.verified) return void res.sendStatus(401);
+    if (!user || !user.verified) {
+      return res.status(403).json({
+        error: "Please verify your email before signing in.",
+      });
+    }
 
     next();
   },
 ];
+
