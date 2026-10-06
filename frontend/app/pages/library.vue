@@ -76,10 +76,17 @@
           @click="openLibraryItem(item)"
         >
           <img
+            v-if="item.type === 'image'"
             :src="item.path"
             :alt="item.title"
             class="w-full h-48 object-cover"
           />
+          <video
+            v-else-if="item.type === 'video'"
+            :src="item.path"
+            :alt="item.title"
+            class="w-full h-48 object-cover"
+           ></video>
           <div class="p-4">
             <div class="font-bold text-lg mb-2 text-gray-900">
               {{ item.title }}
@@ -120,7 +127,7 @@ function closeLibraryItem() {
 interface Media {
   id: string;
   title: string;
-  type: string;
+  type: "image" | "video";
   tags: string[];
   path: string;
 }
