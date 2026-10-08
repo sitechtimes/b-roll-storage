@@ -50,12 +50,44 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
-  return {
-    signedIn,
-    signIn,
-    signUp,
-    isLoggedIn,
-    logout,
-    user,
-  };
+  interface Media {
+  id: string;
+  title: string;
+  type: "image" | "video";
+  tags: string[];
+  path: string;
+}
+
+const media = ref<Media[]>([]);
+const searchQuery = ref("");
+
+const filteredMedia = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) {
+    return media.value;
+  }
+
+  return media.value.filter((item) => {
+    const tags = item.tags?.join(" ") ?? "";
+    const searchable = `${item.title} ${item.type} ${tags}`.toLowerCase();
+    return searchable.includes(query);
+  });
+});
+
+async function fetchMedia() {
+  media.value = await $fetch<Media[]>(`${backend}/medias`);
+}
+
+return {
+  signedIn,
+  signIn,
+  signUp,
+  isLoggedIn,
+  logout,
+  user,
+  media,
+  filteredMedia,
+  searchQuery,
+  fetchMedia,
+};
 });

@@ -45,7 +45,7 @@
           />
         </label>
         <p class="text-sm text-gray-500 mt-2 text-center">
-          Showing {{ filteredMedia.length }} of {{ media.length }} items
+          Showing {{ auth.filteredMedia.length }} of {{ auth.media.length }} items
         </p>
       </div>
       <div v-if="modalView">
@@ -70,16 +70,23 @@
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
       >
         <div
-          v-for="item in filteredMedia"
-          :key="item._id.$oid"
+          v-for="item in auth.filteredMedia"
+          :key="item.id"
           class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
           @click="openLibraryItem(item)"
         >
           <img
+            v-if="item.type === 'image'"
             :src="item.path"
             :alt="item.title"
             class="w-full h-48 object-cover"
           />
+          <video
+            v-else-if="item.type === 'video'"
+            :src="item.path"
+            :alt="item.title"
+            class="w-full h-48 object-cover"
+           ></video>
           <div class="p-4">
             <div class="font-bold text-lg mb-2 text-gray-900">
               {{ item.title }}
@@ -92,13 +99,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useViewHistoryStore } from "~/stores/viewHistory";
 
+const auth = useAuthStore() as any;
 const historyStore = useViewHistoryStore();
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 const searchQuery = ref("");
+
+onMounted(() => {
+  auth.fetchMedia();
+});
 
 function openLibraryItem(x: any) {
   modalView.value = true;
@@ -114,42 +126,4 @@ function openHistoryItem(item: any) {
 function closeLibraryItem() {
   modalView.value = false;
 }
-
-/* below is just for the test data file in here for now */
-interface Media {
-  _id: {
-    $oid: string;
-  };
-  title: string;
-  type: string;
-  tags: string[];
-  path: string;
-}
-
-const media = ref<Media[]>([]);
-
-const filteredMedia = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) {
-    return media.value;
-  }
-
-  return media.value.filter((item) => {
-    const tags = item.tags?.join(" ") ?? "";
-    const searchable = `${item.title} ${item.type} ${tags}`.toLowerCase();
-    return searchable.includes(query);
-  });
-});
-
-onMounted(async () => {
-  try {
-    const response = await fetch("/test-data.json");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    media.value = await response.json();
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-});
 </script>
