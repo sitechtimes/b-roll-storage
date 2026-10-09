@@ -50,6 +50,19 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
+  async function saveRecents(recents: string[]) {
+    const userId = user.value?.id;
+    const token = tokenCookie.value;
+    if(!userId || !token) {
+      throw new Error("You must be signed in to save history");
+    }
+    return $fetch(`${backend}/users/${userId}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: { recents },
+    });
+  }
+
   interface Media {
   id: string;
   title: string;
@@ -59,6 +72,7 @@ export const useAuthStore = defineStore("auth", () => {
 }
 
 const media = ref<Media[]>([]);
+const history = ref<unknown[]>([]);
 const searchQuery = ref("");
 
 const filteredMedia = computed(() => {
@@ -78,6 +92,16 @@ async function fetchMedia() {
   media.value = await $fetch<Media[]>(`${backend}/medias`);
 }
 
+async function fetchHistory() {
+      if (!isLoggedIn.value) {
+        return;
+      }
+      
+      history.value = await $fetch(`${backend}/users/${user.value.id}/history`, {
+        headers: { Authorization: `Bearer ${tokenCookie.value}` },
+      });
+    }
+
 return {
   signedIn,
   signIn,
@@ -89,5 +113,8 @@ return {
   filteredMedia,
   searchQuery,
   fetchMedia,
+  saveRecents,
+  fetchHistory,
+  history,
 };
 });

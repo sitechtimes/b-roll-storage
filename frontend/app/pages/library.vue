@@ -110,17 +110,21 @@ const searchQuery = ref("");
 
 onMounted(() => {
   auth.fetchMedia();
+  historyStore.fetchHistory();
 });
 
 function openLibraryItem(x: any) {
   modalView.value = true;
   selectedItem.value = x;
   historyStore.addToHistory(x);
+  auth.saveRecents([x.id]);
 }
 
 function openHistoryItem(item: any) {
   modalView.value = true;
   selectedItem.value = item;
+  historyStore.addToHistory(item);
+  auth.saveRecents([item.id]);
 }
 
 function closeLibraryItem() {

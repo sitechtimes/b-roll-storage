@@ -18,7 +18,7 @@ export const useViewHistoryStore = defineStore(
     function clearHistory() {
       history.value = [];
     }
-
+  
     return {
       history,
       addToHistory,
