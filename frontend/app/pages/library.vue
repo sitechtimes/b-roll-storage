@@ -108,9 +108,9 @@ let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 const searchQuery = ref("");
 
-onMounted(() => {
-  auth.fetchMedia();
-  historyStore.fetchHistory();
+onMounted(async () => {
+  await auth.fetchMedia();
+  historyStore.history = await auth.fetchHistory();
 });
 
 function openLibraryItem(x: any) {

@@ -93,14 +93,24 @@ async function fetchMedia() {
 }
 
 async function fetchHistory() {
-      if (!isLoggedIn.value) {
-        return;
-      }
-      
-      history.value = await $fetch(`${backend}/users/${user.value.id}/history`, {
-        headers: { Authorization: `Bearer ${tokenCookie.value}` },
-      });
-    }
+  const userId = user.value?.id;
+  if (!isLoggedIn.value || !userId) {
+    history.value = [];
+    return history.value;
+  }
+
+  const account = await $fetch<{ recents: string[] }>(
+    `${backend}/users/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${tokenCookie.value}` },
+    },
+  );
+
+  history.value = (account.recents ?? [])
+    .map((id) => media.value.find((item) => item.id === id))
+    .filter((item): item is Media => item !== undefined);
+  return history.value;
+}
 
 return {
   signedIn,
