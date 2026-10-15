@@ -10,6 +10,9 @@ export const useAuthStore = defineStore("auth", () => {
   const tokenCookie = useCookie<string | null>("auth_token", {
     default: () => null,
   });
+  const userIdCookie = useCookie<string | null>("user_id", {
+    default: () => null,
+  });
   const isLoggedIn = ref<boolean>(Boolean(authCookie.value));
   const user = ref<any>(null);
   function signedIn(userData: any, token: string) {
@@ -18,6 +21,7 @@ export const useAuthStore = defineStore("auth", () => {
     authCookie.value = true;
     tokenCookie.value = token;
     user.value = userData;
+    userIdCookie.value = userData.id ?? null;
   }
 
   async function signIn(email: string, password: string) {
@@ -47,11 +51,12 @@ export const useAuthStore = defineStore("auth", () => {
     isLoggedIn.value = false;
     authCookie.value = false;
     tokenCookie.value = null;
+    userIdCookie.value = null;
     user.value = null;
   }
 
   async function saveRecents(recents: string[]) {
-    const userId = user.value?.id;
+    const userId = user.value?.id ?? userIdCookie.value;
     const token = tokenCookie.value;
     if(!userId || !token) {
       throw new Error("You must be signed in to save history");
@@ -93,8 +98,9 @@ async function fetchMedia() {
 }
 
 async function fetchHistory() {
-  const userId = user.value?.id;
-  if (!isLoggedIn.value || !userId) {
+  const userId = user.value?.id ?? userIdCookie.value;
+  const token = tokenCookie.value;
+  if (!isLoggedIn.value || !userId || !token) {
     history.value = [];
     return history.value;
   }
@@ -102,7 +108,7 @@ async function fetchHistory() {
   const account = await $fetch<{ recents: string[] }>(
     `${backend}/users/${userId}`,
     {
-      headers: { Authorization: `Bearer ${tokenCookie.value}` },
+      headers: { Authorization: `Bearer ${token}` },
     },
   );
 
