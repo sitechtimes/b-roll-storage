@@ -1,20 +1,19 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));
 
+app.use(cors());
+
 const Routes = require("./routes");
 app.use(`/`, Routes);
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
 
 mongoose.connect(process.env.MONGO_URI ?? "").catch((err) => {
   console.error("emerson mongo exploded! do you have .env? ", err);

@@ -38,7 +38,7 @@
             />
           </label>
 
-          <p v-if="errorMessage" class="text-sm text-error">
+          <p v-if="errorMessage" class="text-sm text-error mb-0">
             {{ errorMessage }}
           </p>
 
@@ -62,6 +62,7 @@
           >
             Guest Sign In
           </button>
+          Don't have an account? <NuxtLink to="/signup" class="text-primary hover:underline">Sign up here.</NuxtLink>
         </form>
       </div>
     </div>
@@ -78,7 +79,6 @@ const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-const API_BASE = "http://localhost:3001"; // Replace with your actual API base URL
 
 async function handleLogin() {
   errorMessage.value = "";
@@ -90,12 +90,7 @@ async function handleLogin() {
 
   isSubmitting.value = true;
   try {
-    const response: any = await $fetch(`${API_BASE}/auth/signin`, {
-      method: "POST",
-      body: { email: email.value, password: password.value },
-    });
-
-    auth.signedIn(response, response.token);
+    await auth.signIn(email.value, password.value);
     await navigateTo("/library");
   } catch (err: any) {
     errorMessage.value = err?.data?.error || "Login failed. Please try again.";
