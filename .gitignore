@@ -1,8 +1,0 @@
-node_modules/
-.env
-dev.env
-
-broll/
-
-recognize-anything/
-.venv
