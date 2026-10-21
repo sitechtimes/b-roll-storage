@@ -16,7 +16,6 @@ async function run() {
     console.log("Collection:", collection.collectionName);
     console.log("Document count:", await collection.countDocuments());
 
-    // Step 1: Combine each document's title and tags into searchText.
     await collection.updateMany({}, [
       {
         $set: {
@@ -42,7 +41,6 @@ async function run() {
     console.log("Updated searchText fields.");
     console.log("Sample document:", await collection.findOne());
 
-    // Step 2: Define the index to use searchText.
     const index = {
       name: "autoembed_index",
       type: "vectorSearch",
@@ -58,7 +56,6 @@ async function run() {
       },
     };
 
-    // Step 3: Check whether the index already exists.
     const indexes = await collection.listSearchIndexes().toArray();
     const existingIndex = indexes.find((item) => item.name === index.name);
 
@@ -85,7 +82,6 @@ async function run() {
       console.log(`Created index: ${result}`);
     }
 
-    // Step 4: Wait until the index is queryable.
     console.log("Checking index status...");
 
     while (true) {
