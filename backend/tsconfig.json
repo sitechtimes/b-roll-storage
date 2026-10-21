@@ -4,6 +4,6 @@
     "outDir": "./dist",
     "rootDir": "./"
   },
-  "include": ["**/*.ts", "**/*.d.ts"],
+  "include": ["**/*.ts", "**/*.d.ts", "run_query.js", "vector_index.js"],
   "exclude": ["dist"]
 }

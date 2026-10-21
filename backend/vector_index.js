@@ -7,10 +7,42 @@ const client = new MongoClient(uri);
 
 async function run() {
   try {
+    await client.connect();
+
     const database = client.db("test");
     const collection = database.collection("media");
 
-    // define your MongoDB Vector Search index
+    console.log("Database:", database.databaseName);
+    console.log("Collection:", collection.collectionName);
+    console.log("Document count:", await collection.countDocuments());
+
+    // Step 1: Combine each document's title and tags into searchText.
+    await collection.updateMany({}, [
+      {
+        $set: {
+          searchText: {
+            $concat: [
+              { $ifNull: ["$title", ""] },
+              " ",
+              {
+                $reduce: {
+                  input: { $ifNull: ["$tags", []] },
+                  initialValue: "",
+                  in: {
+                    $concat: ["$$value", " ", "$$this"],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    ]);
+
+    console.log("Updated searchText fields.");
+    console.log("Sample document:", await collection.findOne());
+
+    // Step 2: Define the index to use searchText.
     const index = {
       name: "autoembed_index",
       type: "vectorSearch",
@@ -19,39 +51,59 @@ async function run() {
           {
             type: "autoEmbed",
             modality: "text",
-            path: "fullplot",
+            path: "searchText",
             model: "voyage-4",
           },
         ],
       },
     };
 
-    // run the helper method
-    const result = await collection.createSearchIndex(index);
-    console.log(`New search index named ${result} is building.`);
+    // Step 3: Check whether the index already exists.
+    const indexes = await collection.listSearchIndexes().toArray();
+    const existingIndex = indexes.find((item) => item.name === index.name);
 
-    console.log(
-      "Polling to check if the index is ready. This may take up to a minute.",
-    );
-    let isQueryable = false;
-    while (!isQueryable) {
+    if (existingIndex) {
+      console.log("Existing index definition:");
+      console.dir(existingIndex.latestDefinition, { depth: null });
+
+      const existingFields = existingIndex.latestDefinition?.fields ?? [];
+
+      const isCorrect = existingFields.some(
+        (field) => field.path === "searchText" && field.type === "autoEmbed",
+      );
+
+      if (!isCorrect) {
+        console.log(
+          "The existing index uses a different field. Delete autoembed_index in Atlas, then run this script again.",
+        );
+        return;
+      }
+
+      console.log("Index already uses searchText.");
+    } else {
+      const result = await collection.createSearchIndex(index);
+      console.log(`Created index: ${result}`);
+    }
+
+    // Step 4: Wait until the index is queryable.
+    console.log("Checking index status...");
+
+    while (true) {
       const [indexData] = await collection
         .listSearchIndexes(index.name)
         .toArray();
-      if (indexData) {
-        isQueryable = indexData.queryable;
-        if (!isQueryable) {
-          await setTimeout(5000);
-        }
-      } else {
-        console.log(`Index ${index.name} not found.`);
-        await setTimeout(5000);
+
+      if (indexData?.queryable) {
+        console.log("Index is ready for querying.");
+        break;
       }
+
+      console.log("Index is still building. Checking again in 5 seconds...");
+      await setTimeout(5000);
     }
-    console.log(`${result} is ready for querying.`);
   } finally {
     await client.close();
   }
 }
 
-run().catch(console.dir);
+run().catch(console.error);

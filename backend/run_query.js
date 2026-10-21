@@ -2,21 +2,27 @@ require("dotenv").config();
 const { MongoClient } = require("mongodb");
 
 async function main() {
-  // Replace the placeholder with your connection string
-
   const uri = process.env.MONGO_URI;
+
+  if (!uri) {
+    throw new Error("MONGO_URI is missing from your .env file");
+  }
+
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
+
     const database = client.db("test");
     const collection = database.collection("media");
+
+    console.log("Total documents:", await collection.countDocuments());
 
     const pipeline = [
       {
         $vectorSearch: {
           index: "autoembed_index",
-          path: "fullplot",
+          path: "searchText",
           query: {
             text: "bird",
           },
@@ -28,14 +34,16 @@ async function main() {
         $project: {
           _id: 0,
           title: 1,
-          fullplot: 1,
+          tags: 1,
           score: { $meta: "vectorSearchScore" },
         },
       },
     ];
 
-    const cursor = collection.aggregate(pipeline);
-    await cursor.forEach((doc) => console.log(doc));
+    const results = await collection.aggregate(pipeline).toArray();
+
+    console.log("Number of results:", results.length);
+    console.dir(results, { depth: null });
   } finally {
     await client.close();
   }
