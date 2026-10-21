@@ -16,9 +16,9 @@ async function main() {
       {
         $vectorSearch: {
           index: "autoembed_index",
-          path: "fullplot",
+          path: "tags",
           query: {
-            text: "bird",
+            text: "kid",
           },
           numCandidates: 100,
           limit: 10,
@@ -28,7 +28,7 @@ async function main() {
         $project: {
           _id: 0,
           title: 1,
-          fullplot: 1,
+          tags: 1,
           score: { $meta: "vectorSearchScore" },
         },
       },

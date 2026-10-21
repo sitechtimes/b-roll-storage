@@ -10,7 +10,6 @@ async function run() {
     const database = client.db("test");
     const collection = database.collection("media");
 
-    // define your MongoDB Vector Search index
     const index = {
       name: "autoembed_index",
       type: "vectorSearch",
@@ -19,7 +18,7 @@ async function run() {
           {
             type: "autoEmbed",
             modality: "text",
-            path: "fullplot",
+            path: "tags",
             model: "voyage-4",
           },
         ],
