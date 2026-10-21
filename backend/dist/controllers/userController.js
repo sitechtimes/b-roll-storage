@@ -1,0 +1,137 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const user_1 = require("../models/user");
+const userRole_1 = require("../utils/userRole");
+async function index(req, res) {
+    const user = await user_1.User.find();
+    return res.json(user);
+}
+async function getUserById(req, res) {
+    const user = await user_1.User.findById(req.params.id);
+    if (!user)
+        return res.status(404).json("User not found");
+    return res.json(user);
+}
+async function getUser(req, res) {
+    let query = {};
+    if (req.query.role &&
+        Object.values(userRole_1.UserRole).includes(req.query.role)) {
+        query.role = req.query.role;
+    }
+    if (req.query.name) {
+        query.name = { $regex: req.query.name, $options: "i" };
+    }
+    const user = await user_1.User.find(query);
+    if (user.length === 0) {
+        return res.status(404).json({ error: "User Not Found" });
+    }
+    return res.status(200).json(user);
+}
+async function deleteUser(req, res) {
+    const user = await user_1.User.findByIdAndDelete(req.params.id);
+    if (!user)
+        return res.status(404).json({ error: "User not found" });
+    return res.status(200).json({ message: "User successfully deleted" });
+}
+async function deleteAllUsers(req, res) {
+    const user = await user_1.User.deleteMany({});
+    if (!user)
+        return res.status(404).json({ error: "User not found" });
+    return res.status(200).json({ message: "All users successfully deleted" });
+}
+async function updateUser(req, res) {
+    if (Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Empty body" });
+    }
+    let updates = {};
+    let warnings = [];
+    const thisUser = await user_1.User.findById(req.params.id);
+    if (!thisUser)
+        return res.status(404).json({ error: "User not found" });
+    if (req.currentUser?.id !== thisUser?.id &&
+        req.currentUser?.role !== "admin") {
+        return res.status(403).json({ error: "Not authorized" });
+    }
+    if (req.body.role) {
+        if (Object.values(userRole_1.UserRole).includes(req.body.role)) {
+            if (req.currentUser?.role === "admin") {
+                updates.role = req.body.role;
+            }
+            else {
+                warnings.push("Admin access is required to change roles");
+            }
+        }
+        else {
+            warnings.push("Role does not exist");
+        }
+    }
+    if (req.body.name) {
+        updates.name = req.body.name;
+    }
+    if (req.body.recents) {
+        const recents = [
+            ...new Set(req.body.recents
+                .map((item) => item.trim())
+                .filter((item) => item.length > 0)),
+        ];
+        await user_1.User.findByIdAndUpdate(req.params.id, {
+            $pull: { recents: { $in: recents } },
+        });
+        updates.$push = {
+            recents: { $each: recents, $position: 0, $slice: 20 },
+        };
+    }
+    const user = await user_1.User.findByIdAndUpdate(req.params.id, updates, {
+        returnDocument: "after",
+    });
+    if (!user)
+        return res.status(404).json({ error: "User not found" });
+    return res.json({ user, warnings });
+}
+async function changePassword(req, res) {
+    if (!req.body.password) {
+        return res.status(404).json({ error: "New password not found" });
+    }
+    if (req.body.password.length < 8) {
+        return res
+            .status(400)
+            .json({ error: "Password must be at least 8 characters" });
+    }
+    const newPassword = req.body.password.trim();
+    const thisUser = await user_1.User.findById(req.params.id);
+    if (!thisUser)
+        return res.status(404).json({ error: "User not found" });
+    if (req.currentUser?.id !== thisUser?.id &&
+        req.currentUser?.role !== "admin") {
+        return res.status(403).json({ error: "Not authorized" });
+    }
+    if (req.currentUser?.role !== "admin") {
+        if (!req.body.currentPassword) {
+            return res.status(404).json({ error: "Old password not found" });
+        }
+        const oldPassword = req.body.currentPassword.trim();
+        if (!(await thisUser.comparePassword(oldPassword))) {
+            return res.status(403).json({ error: "Current password does not match" });
+        }
+    }
+    if (await thisUser.comparePassword(newPassword)) {
+        return res.status(409).json({ error: "Password cannot be the same" });
+    }
+    try {
+        thisUser.password = newPassword;
+        await thisUser.save();
+    }
+    catch (err) {
+        return res.status(500).json({ error: "Save failed" });
+    }
+    return res.json(thisUser);
+}
+module.exports = {
+    index,
+    getUserById,
+    getUser,
+    deleteUser,
+    deleteAllUsers,
+    updateUser,
+    changePassword,
+};
