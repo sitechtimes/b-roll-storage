@@ -189,6 +189,52 @@ async function updateMedia(req: Request, res: Response) {
   return res.json(media);
 }
 
+async function searchMedia(req: Request, res: Response) {
+  try {
+    let query = String(req.query.q ?? "").trim();
+
+    if (!query) {
+      return res.status(400).json({
+        error: "Search query is required",
+      });
+    }
+
+    const pipeline: any[] = [
+      {
+        $vectorSearch: {
+          index: "autoembed_index",
+          path: "tags",
+          query: {
+            text: query,
+          },
+          numCandidates: 100,
+          limit: 10,
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          type: 1,
+          path: 1,
+          tags: 1,
+          score: {
+            $meta: "vectorSearchScore",
+          },
+        },
+      },
+    ];
+
+    const results = await Media.aggregate(pipeline);
+
+    return res.status(200).json(results);
+  } catch (err) {
+    console.error("Vector search failed:", err);
+    return res.status(500).json({
+      error: "Failed to search media",
+    });
+  }
+}
+
 module.exports = {
   index,
   getMediaById,
@@ -197,4 +243,5 @@ module.exports = {
   deleteMedia,
   deleteAllMedia,
   updateMedia,
+  searchMedia,
 };

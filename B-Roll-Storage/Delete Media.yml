@@ -1,11 +1,11 @@
 info:
   name: Delete Media
   type: http
-  seq: 5
+  seq: 6
 
 http:
   method: DELETE
-  url: "{{base_url}}/medias/6ab296c64db8c9457f1581b5"
+  url: "{{base_url}}/medias/6ac3baa290e804f4440e3e5c"
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkwMTc0NDAwLCJleHAiOjE3OTAxOTYwMDB9.MQCNAUGXyaFgicCQLFyZUIayaolWJ0JArS4UgdbwiS8
