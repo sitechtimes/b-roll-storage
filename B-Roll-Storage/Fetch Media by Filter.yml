@@ -5,20 +5,23 @@ info:
 
 http:
   method: GET
-  url: "{{base_url}}/medias/filter?type=image&title=Deniz&strict=false&tags=pigeon,duck"
+  url: "{{base_url}}/medias/filter?type=video"
   params:
     - name: type
-      value: image
+      value: video
       type: query
     - name: title
       value: Deniz
       type: query
+      disabled: true
     - name: strict
       value: "false"
       type: query
+      disabled: true
     - name: tags
       value: pigeon,duck
       type: query
+      disabled: true
   auth: inherit
 
 settings:
@@ -26,3 +29,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
