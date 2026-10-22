@@ -2,6 +2,7 @@ import express from "express";
 import { body } from "express-validator";
 import { validateRequest } from "../middleware/validateRequest";
 import { currentUser } from "../middleware/currentUser";
+import { User } from "../models/user";
 const authController = require("../controllers/authController");
 const router = express.Router();
 
@@ -31,13 +32,10 @@ router.post(
 
 router.post("/signout", authController.signOut);
 
-// after signup, POST to get a token
-router.post("/verify", currentUser, authController.sendVerify);
-// link from email uses GET
-router.get("/verify", authController.verify);
-
 router.post("/send-reset", currentUser, authController.sendReset);
 
 router.post("/reset-password", currentUser, authController.resetPassword);
+
+router.get("/verify", authController.verify);
 
 module.exports = router;
