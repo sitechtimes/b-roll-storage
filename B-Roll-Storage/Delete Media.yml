@@ -5,10 +5,10 @@ info:
 
 http:
   method: DELETE
-  url: "{{base_url}}/medias/6ac3baa290e804f4440e3e5c"
+  url: "{{base_url}}/medias/6ad99c186122b4ec130feb64"
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkwMTc0NDAwLCJleHAiOjE3OTAxOTYwMDB9.MQCNAUGXyaFgicCQLFyZUIayaolWJ0JArS4UgdbwiS8
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkyNjQ2NDA1LCJleHAiOjE3OTI2NjgwMDV9.9T5KhsjwSBer8bIB6bvkIn0V_ZANoJvhsMvLZENhHpE
 
 settings:
   encodeUrl: true
