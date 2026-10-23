@@ -50,12 +50,12 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
-  return {
-    signedIn,
-    signIn,
-    signUp,
-    isLoggedIn,
-    logout,
-    user,
-  };
+return {
+  signedIn,
+  signIn,
+  signUp,
+  isLoggedIn,
+  logout,
+  user,
+};
 });
