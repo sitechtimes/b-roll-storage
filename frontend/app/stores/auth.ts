@@ -55,6 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
+<<<<<<< HEAD
   async function saveRecents(recents: string[]) {
     const userId = user.value?.id ?? userIdCookie.value;
     const token = tokenCookie.value;
@@ -118,6 +119,8 @@ async function fetchHistory() {
   return history.value;
 }
 
+=======
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 return {
   signedIn,
   signIn,
@@ -125,6 +128,7 @@ return {
   isLoggedIn,
   logout,
   user,
+<<<<<<< HEAD
   media,
   filteredMedia,
   searchQuery,
@@ -132,5 +136,7 @@ return {
   saveRecents,
   fetchHistory,
   history,
+=======
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 };
 });

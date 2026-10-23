@@ -38,14 +38,14 @@
       <div class="w-1/2 mx-auto mb-8">
         <label class="input input-bordered flex items-center gap-2 w-full">
           <input
-            v-model.trim="searchQuery"
+            v-model.trim="mediaStore.searchQuery"
             type="search"
             placeholder="Search by title, type, or tag"
             class="grow w-full"
           />
         </label>
         <p class="text-sm text-gray-500 mt-2 text-center">
-          Showing {{ auth.filteredMedia.length }} of {{ auth.media.length }} items
+          Showing {{ mediaStore.filteredMedia.length }} of {{ mediaStore.media.length }} items
         </p>
       </div>
       <div v-if="modalView">
@@ -70,7 +70,7 @@
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
       >
         <div
-          v-for="item in auth.filteredMedia"
+          v-for="item in mediaStore.filteredMedia"
           :key="item.id"
           class="bg-white rounded-lg shadow-md overflow-hidden text-center transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
           @click="openLibraryItem(item)"
@@ -101,16 +101,22 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useViewHistoryStore } from "~/stores/viewHistory";
+import { useMediaStore } from "~/stores/media";
 
-const auth = useAuthStore() as any;
+const mediaStore = useMediaStore();
 const historyStore = useViewHistoryStore();
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
-const searchQuery = ref("");
 
+
+<<<<<<< HEAD
 onMounted(async () => {
   await auth.fetchMedia();
   historyStore.history = await auth.fetchHistory();
+=======
+onMounted(() => {
+  mediaStore.fetchMedia();
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 });
 
 function openLibraryItem(x: any) {
