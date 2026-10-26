@@ -55,6 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
+<<<<<<< HEAD
   async function saveRecents(recents: string[]) {
     const userId = user.value?.id ?? userIdCookie.value;
     const token = tokenCookie.value;
@@ -67,6 +68,35 @@ export const useAuthStore = defineStore("auth", () => {
       body: { recents },
     });
   }
+
+  interface Media {
+  id: string;
+  title: string;
+  type: "image" | "video";
+  tags: string[];
+  path: string;
+}
+
+const media = ref<Media[]>([]);
+const history = ref<unknown[]>([]);
+const searchQuery = ref("");
+
+const filteredMedia = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) {
+    return media.value;
+  }
+
+  return media.value.filter((item) => {
+    const tags = item.tags?.join(" ") ?? "";
+    const searchable = `${item.title} ${item.type} ${tags}`.toLowerCase();
+    return searchable.includes(query);
+  });
+});
+
+async function fetchMedia() {
+  media.value = await $fetch<Media[]>(`${backend}/medias`);
+}
 
 async function fetchHistory() {
   const userId = user.value?.id ?? userIdCookie.value;
@@ -89,6 +119,8 @@ async function fetchHistory() {
   return history.value;
 }
 
+=======
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 return {
   signedIn,
   signIn,
@@ -96,8 +128,15 @@ return {
   isLoggedIn,
   logout,
   user,
+<<<<<<< HEAD
+  media,
+  filteredMedia,
+  searchQuery,
+  fetchMedia,
   saveRecents,
   fetchHistory,
   history,
+=======
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 };
 });

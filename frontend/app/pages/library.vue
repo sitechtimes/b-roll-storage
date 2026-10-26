@@ -109,22 +109,28 @@ let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 
 
+<<<<<<< HEAD
+onMounted(async () => {
+  await auth.fetchMedia();
+  historyStore.history = await auth.fetchHistory();
+=======
 onMounted(() => {
   mediaStore.fetchMedia();
+>>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 });
 
 function openLibraryItem(x: any) {
   modalView.value = true;
   selectedItem.value = x;
   historyStore.addToHistory(x);
-  mediaStore.saveRecents([x.id]);
+  auth.saveRecents([x.id]);
 }
 
 function openHistoryItem(item: any) {
   modalView.value = true;
   selectedItem.value = item;
   historyStore.addToHistory(item);
-  mediaStore .saveRecents([item.id]);
+  auth.saveRecents([item.id]);
 }
 
 function closeLibraryItem() {
