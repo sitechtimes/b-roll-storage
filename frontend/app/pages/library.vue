@@ -5,9 +5,19 @@
       class="w-64 h-[calc(100vh-1.5rem)] ml-3 my-3 rounded-3xl bg-linear-to-b from-gray-50 to-gray-100 shadow-lg overflow-hidden flex flex-col"
     >
       <div class="p-6 overflow-y-auto flex-1">
-        <h2 class="text-lg font-bold text-gray-900 mb-4 tracking-tight">
-          View History
-        </h2>
+        <div class="mb-4 flex items-center justify-between gap-2">
+          <h2 class="text-lg font-bold text-gray-900 tracking-tight">
+            View History
+          </h2>
+          <button
+            v-if="historyStore.history.length > 0"
+            type="button"
+            class="btn btn-ghost btn-xs"
+            @click="historyStore.clearHistory()"
+          >
+            Clear history
+          </button>
+        </div>
         <div
           v-if="historyStore.history.length === 0"
           class="text-sm text-gray-400"
@@ -109,8 +119,9 @@ let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 
 
-onMounted(() => {
-  mediaStore.fetchMedia();
+onMounted(async () => {
+  await mediaStore.fetchMedia();
+  historyStore.history = await historyStore.fetchHistory();
 });
 
 function openLibraryItem(x: any) {
@@ -130,4 +141,5 @@ function openHistoryItem(item: any) {
 function closeLibraryItem() {
   modalView.value = false;
 }
+
 </script>

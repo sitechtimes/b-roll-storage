@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useAuthStore = defineStore("auth", () => {
   const backend = useRuntimeConfig().public.backend;
@@ -13,6 +13,8 @@ export const useAuthStore = defineStore("auth", () => {
   const userIdCookie = useCookie<string | null>("user_id", {
     default: () => null,
   });
+  const token = computed(() => tokenCookie.value);
+  const userId = computed(() => userIdCookie.value);
   const isLoggedIn = ref<boolean>(Boolean(authCookie.value));
   const user = ref<any>(null);
   function signedIn(userData: any, token: string) {
@@ -60,6 +62,8 @@ return {
   signIn,
   signUp,
   isLoggedIn,
+  token,
+  userId,
   logout,
   user,
 };

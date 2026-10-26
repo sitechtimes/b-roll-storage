@@ -5,11 +5,8 @@ export const useViewHistoryStore = defineStore(
   "viewHistory",
   () => {
     const history = ref<any[]>([]);
-    const user = ref<any>(null);
-    const tokenCookie = useCookie<string | null>("token", {
-      default: () => null,
-    });
-    const backend = useRuntimeConfig().public.backendUrl;
+    const auth = useAuthStore();
+    const backend = useRuntimeConfig().public.backend;
 
     function addToHistory(item: any) {
       if (history.value[0] !== item) {
@@ -21,30 +18,56 @@ export const useViewHistoryStore = defineStore(
     }
 
     async function saveRecents(recents: string[]) {
-    const userId = user.value?.id;
-    const token = tokenCookie.value;
-    if(!userId || !token) {
-      throw new Error("You must be signed in to save history");
+      const userId = auth.userId;
+      const token = auth.token;
+      if (!userId || !token) {
+        throw new Error("You must be signed in to save history");
+      }
+      return $fetch(`${backend}/users/${userId}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+        body: { recents },
+      });
     }
-    return $fetch(`${backend}/users/${userId}`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-      body: { recents },
-    });
+
+    async function fetchHistory() {
+  const userId = auth.userId;
+  const token = auth.token;
+  if (!auth.isLoggedIn || !userId || !token) {
+    history.value = [];
+    return history.value;
   }
 
-    function clearHistory() {
+  const account = await $fetch<{ recents: string[] }>(
+    `${backend}/users/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  history.value = (account.recents ?? [])
+    .map((id) => useMediaStore().media.find((item) => item.id === id))
+    .filter((item): item is any => item !== undefined);
+  return history.value;
+}
+
+    async function clearHistory() {
       history.value = [];
+      if (auth.userId && auth.token) {
+        await saveRecents([]);
+      }
+      return history.value;
     }
-  
+
     return {
       history,
       addToHistory,
       clearHistory,
       saveRecents,
-    };  
+      fetchHistory,
+    };
   },
   {
     persist: true,
-  } as any
+  } as any,
 );
