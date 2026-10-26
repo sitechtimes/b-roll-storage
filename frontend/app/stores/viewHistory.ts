@@ -5,6 +5,11 @@ export const useViewHistoryStore = defineStore(
   "viewHistory",
   () => {
     const history = ref<any[]>([]);
+    const user = ref<any>(null);
+    const tokenCookie = useCookie<string | null>("token", {
+      default: () => null,
+    });
+    const backend = useRuntimeConfig().public.backendUrl;
 
     function addToHistory(item: any) {
       if (history.value[0] !== item) {
@@ -15,6 +20,19 @@ export const useViewHistoryStore = defineStore(
       }
     }
 
+    async function saveRecents(recents: string[]) {
+    const userId = user.value?.id;
+    const token = tokenCookie.value;
+    if(!userId || !token) {
+      throw new Error("You must be signed in to save history");
+    }
+    return $fetch(`${backend}/users/${userId}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: { recents },
+    });
+  }
+
     function clearHistory() {
       history.value = [];
     }
@@ -23,7 +41,8 @@ export const useViewHistoryStore = defineStore(
       history,
       addToHistory,
       clearHistory,
-    };
+      saveRecents,
+    };  
   },
   {
     persist: true,

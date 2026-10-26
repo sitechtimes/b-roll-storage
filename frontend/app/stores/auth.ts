@@ -55,72 +55,6 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
-<<<<<<< HEAD
-  async function saveRecents(recents: string[]) {
-    const userId = user.value?.id ?? userIdCookie.value;
-    const token = tokenCookie.value;
-    if(!userId || !token) {
-      throw new Error("You must be signed in to save history");
-    }
-    return $fetch(`${backend}/users/${userId}`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-      body: { recents },
-    });
-  }
-
-  interface Media {
-  id: string;
-  title: string;
-  type: "image" | "video";
-  tags: string[];
-  path: string;
-}
-
-const media = ref<Media[]>([]);
-const history = ref<unknown[]>([]);
-const searchQuery = ref("");
-
-const filteredMedia = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) {
-    return media.value;
-  }
-
-  return media.value.filter((item) => {
-    const tags = item.tags?.join(" ") ?? "";
-    const searchable = `${item.title} ${item.type} ${tags}`.toLowerCase();
-    return searchable.includes(query);
-  });
-});
-
-async function fetchMedia() {
-  media.value = await $fetch<Media[]>(`${backend}/medias`);
-}
-
-async function fetchHistory() {
-  const userId = user.value?.id ?? userIdCookie.value;
-  const token = tokenCookie.value;
-  if (!isLoggedIn.value || !userId || !token) {
-    history.value = [];
-    return history.value;
-  }
-
-  const account = await $fetch<{ recents: string[] }>(
-    `${backend}/users/${userId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  );
-
-  history.value = (account.recents ?? [])
-    .map((id) => media.value.find((item) => item.id === id))
-    .filter((item): item is Media => item !== undefined);
-  return history.value;
-}
-
-=======
->>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 return {
   signedIn,
   signIn,
@@ -128,15 +62,5 @@ return {
   isLoggedIn,
   logout,
   user,
-<<<<<<< HEAD
-  media,
-  filteredMedia,
-  searchQuery,
-  fetchMedia,
-  saveRecents,
-  fetchHistory,
-  history,
-=======
->>>>>>> 32-fetch-data-images-and-videos-from-the-backend-and-display-them-on-the-frontend
 };
 });
