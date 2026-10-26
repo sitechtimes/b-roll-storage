@@ -73,7 +73,6 @@
 import { ref } from "vue";
 
 const auth = useAuthStore();
-
 const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);

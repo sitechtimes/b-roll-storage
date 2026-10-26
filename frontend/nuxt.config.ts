@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   routeRules: {
     "/": { redirect: "/login" },
+    "/api/**": { proxy: "http://localhost:3000/**" },
   },
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
