@@ -212,7 +212,9 @@ async function processVideo(videoPath: string): Promise<string[]> {
       try {
         fs.unlinkSync(f);
       } catch (e: any) {
-        console.error(e);
+        if (e.code !== "ENOENT") {
+          console.error("Failed to delete temporary frame:", e);
+        }
       }
     }
   }

@@ -1,7 +1,7 @@
 info:
   name: Send Reset
   type: http
-  seq: 22
+  seq: 23
 
 http:
   method: POST
@@ -19,3 +19,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

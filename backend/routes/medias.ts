@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get(`/`, mediaController.index);
 router.get(`/filter`, mediaController.getMedia);
+router.get("/search", mediaController.searchMedia);
 router.get("/:id", mediaController.getMediaById);
 router.post(
   "/",
