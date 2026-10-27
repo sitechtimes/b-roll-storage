@@ -1,7 +1,7 @@
 info:
   name: Fetch User by Filter
   type: http
-  seq: 16
+  seq: 17
 
 http:
   method: GET
@@ -22,3 +22,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

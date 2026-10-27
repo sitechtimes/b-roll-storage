@@ -1,15 +1,18 @@
 info:
   name: Delete Media
   type: http
-  seq: 5
+  seq: 6
 
 http:
   method: DELETE
-  url: "{{base_url}}/medias/69b17e9bc48caa9c79b69cab"
-  auth: inherit
+  url: "{{base_url}}/medias/6ad99c186122b4ec130feb64"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZWY3NjM4MzVhMDc5OWMwMmUwOGVlMyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkyNjQ2NDA1LCJleHAiOjE3OTI2NjgwMDV9.9T5KhsjwSBer8bIB6bvkIn0V_ZANoJvhsMvLZENhHpE
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
