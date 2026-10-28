@@ -98,7 +98,7 @@ async function handleSignup() {
   try {
     await auth.signUp(name.value, email.value, password.value);
 
-    await navigateTo("/login");
+    await navigateTo("/verify");
   } catch (error: any) {
     errorMessage.value =
       error?.data?.error ||
