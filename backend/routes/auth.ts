@@ -38,4 +38,6 @@ router.post("/reset-password", currentUser, authController.resetPassword);
 
 router.get("/verify", authController.verify);
 
+router.post("/verify", currentUser, authController.sendVerify);
+
 module.exports = router;
