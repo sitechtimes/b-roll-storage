@@ -47,8 +47,51 @@
               arrive.
             </p>
           </div>
+
+          <button
+            type="button"
+            class="btn btn-outline mt-6 w-full"
+            :disabled="countdown > 0"
+            @click="startCountdown"
+          >
+            {{
+              countdown > 0
+                ? `Resend available in ${countdown}s`
+                : "Resend verification email"
+            }}
+          </button>
         </div>
       </section>
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { onUnmounted, ref } from "vue";
+
+const countdown = ref(0);
+let countdownInterval: ReturnType<typeof setInterval> | undefined;
+
+function startCountdown() {
+  if (countdown.value > 0) {
+    return;
+  }
+
+  countdown.value = 60;
+  countdownInterval = setInterval(() => {
+    countdown.value -= 1;
+
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval);
+      countdownInterval = undefined;
+    }
+  }, 1000);
+}
+
+onUnmounted(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+});
+
+</script>

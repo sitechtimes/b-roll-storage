@@ -7,6 +7,9 @@ import nodemailer from "nodemailer";
 
 const emailCooldown = 60; // email verification cooldown in seconds
 
+async function resendVerificationEmail(user: InstanceType<typeof User>) {
+  
+}
 async function sendVerificationEmail(user: InstanceType<typeof User>) {
   const verificationToken = jwt.sign(
     { email: user.email },
