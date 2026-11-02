@@ -27,39 +27,49 @@
             </svg>
           </div>
 
-          <h1
-            id="verify-title"
-            class="text-3xl font-bold text-base-content"
-          >
-            Check your email
+          <h1 id="verify-title" class="text-3xl font-bold text-base-content">
+            Verify your email
           </h1>
           <p class="mt-3 text-base leading-7 text-base-content/70">
-            We’ve sent you a verification link. Open the email and click the
-            link to finish setting up your account.
+            A verification email was sent if you signed up.
+            Enter the email address to send/resend the verification email.
           </p>
 
-          <div
-            class="mt-6 w-full rounded-lg bg-base-200/70 p-4 text-left"
-          >
-            <p class="text-sm leading-6 text-base-content/70">
-              <span class="font-semibold text-base-content">No email?</span>
-              Check your spam or junk folder. It may take a few minutes to
-              arrive.
-            </p>
-          </div>
+          <form class="mt-2 w-full space-y-4">
+            <label class="form-control w-full text-left">
+              <span class="label">
+                <span class="label-text font-medium ">Email address</span>
+              </span>
+              <input
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                class="input input-bordered w-full mt-2"
+                required
+              />
+            </label>
 
-          <button
-            type="button"
-            class="btn btn-outline mt-6 w-full"
-            :disabled="countdown > 0"
-            @click="startCountdown"
-          >
-            {{
-              countdown > 0
-                ? `Resend available in ${countdown}s`
-                : "Resend verification email"
-            }}
-          </button>
+            <button
+              type="button"
+              class="btn btn-primary w-full mt-2"
+              :disabled="countdown > 0"
+              @click="startCountdown"
+            >
+              {{
+                countdown > 0
+                  ? `Try again in ${countdown}s`
+                  : "Send verification email"
+              }}
+            </button>
+          </form>
+
+          <p class="mt-2 text-sm text-base-content/60">
+            Already requested a link? Check your inbox and spam folder.
+          </p>
+
+          <NuxtLink to="/login" class="btn btn-outline mt-2 w-full">
+            Back to login
+          </NuxtLink>
         </div>
       </section>
     </main>
@@ -93,5 +103,4 @@ onUnmounted(() => {
     clearInterval(countdownInterval);
   }
 });
-
 </script>

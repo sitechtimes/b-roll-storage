@@ -76,6 +76,9 @@
           <NuxtLink to="/login" class="btn btn-outline w-full">
             Back to login
           </NuxtLink>
+          <NuxtLink to="/verify" class="btn btn-outline w-full">
+            Verify account
+          </NuxtLink>
         </form>
       </div>
     </div>
