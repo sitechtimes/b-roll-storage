@@ -156,13 +156,7 @@ async function verify(req: Request, res: Response) {
 }
 
 async function sendVerify(req: Request, res: Response) {
-  if (!req.currentUser) {
-    return res.status(401).json({
-      error: "INVALID_CREDENTIALS",
-    });
-  }
-
-  const { email } = req.currentUser;
+  const { email } = req.body;
 
   const existingUser = await User.findOne({ email });
 
