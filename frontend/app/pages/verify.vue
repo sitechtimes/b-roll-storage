@@ -35,12 +35,13 @@
             Enter the email address to send/resend the verification email.
           </p>
 
-          <form class="mt-2 w-full space-y-4">
+          <form class="mt-2 w-full space-y-4" @submit.prevent="verify.sendVerification(); startCountdown()">
             <label class="form-control w-full text-left">
               <span class="label">
                 <span class="label-text font-medium ">Email address</span>
               </span>
               <input
+                v-model.trim="verify.email"
                 type="email"
                 autocomplete="email"
                 placeholder="you@example.com"
@@ -50,10 +51,9 @@
             </label>
 
             <button
-              type="button"
+              type="submit"
               class="btn btn-primary w-full mt-2"
               :disabled="countdown > 0"
-              @click="startCountdown"
             >
               {{
                 countdown > 0
@@ -78,7 +78,9 @@
 
 <script setup lang="ts">
 import { onUnmounted, ref } from "vue";
+import { useVerifyStore } from "~/stores/verify";
 
+const verify = useVerifyStore();
 const countdown = ref(0);
 let countdownInterval: ReturnType<typeof setInterval> | undefined;
 
