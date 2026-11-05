@@ -5,7 +5,7 @@ export const useVerifyStore = defineStore("verify", () => {
   interface VerifyResponse {
     message: string;
     error?: string;
-
+    verified?: boolean;
   }
 
   const backend = useRuntimeConfig().public.backend;
@@ -31,9 +31,18 @@ export const useVerifyStore = defineStore("verify", () => {
           newToken: true,
         },
       });
+
+      if (response.verified) {
+        errorMessage.value = "This account is already verified";
+        return;
+      }
+
       message.value = response.message;
-    } catch (error) {
-      errorMessage.value = "An error occurred while sending verification email";
+    } catch (error: any) {
+      errorMessage.value =
+        error?.data?.error === "INVALID_CREDENTIALS"
+          ? "Account does not exist"
+          : "An error occurred while sending verification email";
     } finally {
       isSending.value = false;
     }

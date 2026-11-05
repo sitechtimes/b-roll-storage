@@ -35,7 +35,7 @@
             Enter the email address to send/resend the verification email.
           </p>
 
-          <form class="mt-2 w-full space-y-4" @submit.prevent="verify.sendVerification(); startCountdown()">
+          <form class="mt-2 w-full space-y-4" @submit.prevent="handleSendVerification()">
             <label class="form-control w-full text-left">
               <span class="label">
                 <span class="label-text font-medium ">Email address</span>
@@ -63,6 +63,10 @@
             </button>
           </form>
 
+          <p v-if="verify.errorMessage" class="text-sm text-error">
+            {{ verify.errorMessage }}
+          </p>
+
           <p class="mt-2 text-sm text-base-content/60">
             Already requested a link? Check your inbox and spam folder.
           </p>
@@ -83,6 +87,14 @@ import { useVerifyStore } from "~/stores/verify";
 const verify = useVerifyStore();
 const countdown = ref(0);
 let countdownInterval: ReturnType<typeof setInterval> | undefined;
+
+async function handleSendVerification() {
+  await verify.sendVerification();
+
+  if (!verify.errorMessage) {
+    startCountdown();
+  }
+}
 
 function startCountdown() {
   if (countdown.value > 0) {
