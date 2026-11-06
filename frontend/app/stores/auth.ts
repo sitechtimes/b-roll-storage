@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useAuthStore = defineStore("auth", () => {
   const backend = useRuntimeConfig().public.backend;
@@ -10,6 +10,11 @@ export const useAuthStore = defineStore("auth", () => {
   const tokenCookie = useCookie<string | null>("auth_token", {
     default: () => null,
   });
+  const userIdCookie = useCookie<string | null>("user_id", {
+    default: () => null,
+  });
+  const token = computed(() => tokenCookie.value);
+  const userId = computed(() => userIdCookie.value);
   const isLoggedIn = ref<boolean>(Boolean(authCookie.value));
   const user = ref<any>(null);
   function signedIn(userData: any, token: string) {
@@ -18,6 +23,7 @@ export const useAuthStore = defineStore("auth", () => {
     authCookie.value = true;
     tokenCookie.value = token;
     user.value = userData;
+    userIdCookie.value = userData.id ?? null;
   }
 
   async function signIn(email: string, password: string) {
@@ -47,6 +53,7 @@ export const useAuthStore = defineStore("auth", () => {
     isLoggedIn.value = false;
     authCookie.value = false;
     tokenCookie.value = null;
+    userIdCookie.value = null;
     user.value = null;
   }
 
@@ -55,6 +62,8 @@ return {
   signIn,
   signUp,
   isLoggedIn,
+  token,
+  userId,
   logout,
   user,
 };
