@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { useViewHistoryStore } from "~/stores/viewHistory";
+import { useViewHistoryStore } from "~/stores/user";
 
 const historyStore = useViewHistoryStore();
 

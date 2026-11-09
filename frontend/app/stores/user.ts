@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useViewHistoryStore = defineStore(
-  "viewHistory",
+export const useUserStore = defineStore(
+  "user",
   () => {
     const history = ref<any[]>([]);
     const auth = useAuthStore();

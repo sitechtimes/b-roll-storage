@@ -82,9 +82,9 @@
 
 <script setup lang="ts">
 import { onUnmounted, ref } from "vue";
-import { useVerifyStore } from "~/stores/verify";
+import { useAuthStore } from "~/stores/auth";
 
-const verify = useVerifyStore();
+const verify = useAuthStore();
 const countdown = ref(0);
 let countdownInterval: ReturnType<typeof setInterval> | undefined;
 

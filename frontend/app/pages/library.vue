@@ -110,11 +110,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useViewHistoryStore } from "~/stores/viewHistory";
+import { useUserStore } from "~/stores/user";
 import { useMediaStore } from "~/stores/media";
 
 const mediaStore = useMediaStore();
-const historyStore = useViewHistoryStore();
+const historyStore = useUserStore();
 let modalView = ref<boolean>(false);
 let selectedItem = ref<any>(null);
 
