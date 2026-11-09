@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { useViewHistoryStore } from "~/stores/user";
+import { useUserStore } from "~/stores/user";
 
-const historyStore = useViewHistoryStore();
+const historyStore = useUserStore();
 
 const auth = useAuthStore();
 function logout() {
