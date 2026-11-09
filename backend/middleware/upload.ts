@@ -1,6 +1,7 @@
 import multer, { StorageEngine, FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
+import os from 'node:os';
 import { Request } from "express";
 import { UserPayload } from "../middleware/currentUser";
 import { getFileType } from "../utils/getFileType";
@@ -12,7 +13,8 @@ interface AuthenticatedRequest extends Request {
 /**
  * Ensure uploads directory exists
  */
-const uploadsDir: string = path.join(__dirname, "../uploads");
+const homeDir = os.homedir();
+const uploadsDir: string = path.join(homeDir, ".b-roll/uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 /**
@@ -72,7 +74,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: 50 * 1024 * 1024,
   },
 });
 
