@@ -76,6 +76,9 @@
           <NuxtLink to="/login" class="btn btn-outline w-full">
             Back to login
           </NuxtLink>
+          <NuxtLink to="/verify" class="btn btn-outline w-full">
+            Verify account
+          </NuxtLink>
         </form>
       </div>
     </div>
@@ -98,7 +101,7 @@ async function handleSignup() {
   try {
     await auth.signUp(name.value, email.value, password.value);
 
-    await navigateTo("/login");
+    await navigateTo("/verify");
   } catch (error: any) {
     errorMessage.value =
       error?.data?.error ||
